@@ -214,9 +214,7 @@ CELERY_TASK_QUEUES = (
 
 
 # ES
-from elasticsearch_dsl.connections import connections
 ELASTICSEARCH_HOSTS = ['localhost:9200']
-connections.create_connection(hosts=ELASTICSEARCH_HOSTS)
 
 
 for app in PROJECT_APPS:

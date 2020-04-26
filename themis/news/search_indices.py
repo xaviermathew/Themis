@@ -1,4 +1,9 @@
+from django.conf import settings
+
 from elasticsearch_dsl import Document, Keyword, Text
+from elasticsearch_dsl.connections import connections
+
+connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
 
 
 class News(Document):
