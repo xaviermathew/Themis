@@ -6,7 +6,6 @@ import logging
 import urllib.parse as urlparse
 
 import feedparser
-import requests
 
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
@@ -78,6 +77,7 @@ class Article(BaseModel, NewsIndexable):
     published_on = models.DateField()
     is_top_news = models.BooleanField(default=False)
     metadata = JSONField()
+    is_pushed_to_index = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s:%s' % (self.feed, self.title)
@@ -90,9 +90,19 @@ class Article(BaseModel, NewsIndexable):
         super(Article, self).save(*args, **kwargs)
 
     def process(self):
-        # r = requests.get(self.url)
-        # html = r._content
-        _LOG.info('article:[%s] - downloaded url:[%s]', self.pk, self.url)
+        from news.utils.article_utils import get_body_from_article
+
+        save_fields = []
+        if self.body is None:
+            self.body = get_body_from_article(self.url)
+            save_fields.append('body')
+        if not self.is_pushed_to_index:
+            self.push_to_index()
+            self.is_pushed_to_index = True
+            save_fields.append('is_pushed_to_index')
+        if save_fields:
+            self.save(update_fields=save_fields)
+            _LOG.info('article:[%s] - processed url:[%s]', self.pk, self.url)
 
     def process_async(self):
         from news.tasks import process_article_async
@@ -109,6 +119,7 @@ class Tweet(BaseModel, NewsIndexable):
     tweet = models.TextField()
     published_on = models.DateTimeField()
     metadata = JSONField()
+    is_pushed_to_index = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s: %s' % (self.person, self.tweet)
@@ -119,8 +130,11 @@ class Tweet(BaseModel, NewsIndexable):
         return d
 
     def process(self):
-        self.push_to_index()
-        _LOG.info('processed tweet:[%s][%s]', self.pk, self.tweet_id)
+        if not self.is_pushed_to_index:
+            self.push_to_index()
+            self.is_pushed_to_index = True
+            self.save()
+            _LOG.info('processed tweet:[%s][%s]', self.pk, self.tweet_id)
 
     def process_async(self):
         from news.tasks import process_tweet_async

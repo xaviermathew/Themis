@@ -1,1 +1,2 @@
 TWITTER_CRAWL_LIMIT = 100
+ARTICLE_CACHE_DIR = 'data/cache/articles/'
