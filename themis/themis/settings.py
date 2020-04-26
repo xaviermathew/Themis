@@ -31,7 +31,11 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+PROJECT_APPS = [
+    'themis',
+    'entity',
+    'news',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,11 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'themis',
-    'entity',
-    'news',
-]
+] + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -145,7 +145,7 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'handlers': ['console'],
             'propagate': False,
         },
@@ -155,10 +155,23 @@ LOGGING = {
         },
         'urllib3.util.retry': {
             'level': 'INFO',
-            'propagate': True,
-        }
+            'propagate': False,
+        },
+        'asyncio': {
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'parso': {
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
+
+import logging
+
+logging.getLogger('parso').setLevel(logging.WARNING)
+logging.getLogger('asyncio').setLevel(logging.WARNING)
 
 
 # celery
@@ -198,6 +211,18 @@ CELERY_TASK_QUEUES = (
           Exchange(CELERY_TASK_QUEUE_PROCESS_TWEET),
           routing_key=CELERY_TASK_ROUTING_KEY_PROCESS_TWEET),
 )
+
+
+# ES
+ELASTICSEARCH_HOSTS = ['localhost:9200']
+
+
+for app in PROJECT_APPS:
+    try:
+        exec("from {}.app_settings import *".format(app))
+        print("Imported {}.app_settings".format(app))
+    except ImportError as ex:
+        warnings.warn("Importing {}.app_settings.py failed - ({})".format(app, ex))
 
 
 try:

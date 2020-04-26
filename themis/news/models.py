@@ -49,7 +49,7 @@ class Feed(BaseModel):
                 a = Article.objects.create(feed=self,
                                            url=url,
                                            title=entry.pop('title'),
-                                           body=entry.pop('summary'),
+                                           summary=entry.pop('summary'),
                                            published_on=entry.pop('published_parsed'),
                                            is_top_news=self.is_top_news,
                                            metadata=entry)
@@ -73,6 +73,7 @@ class Article(BaseModel, NewsIndexable):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
     url = models.URLField(unique=True, max_length=512)
     title = models.TextField()
+    summary = models.TextField(blank=True, null=True)
     body = models.TextField(blank=True, null=True)
     published_on = models.DateField()
     is_top_news = models.BooleanField(default=False)
@@ -112,7 +113,13 @@ class Tweet(BaseModel, NewsIndexable):
     def __str__(self):
         return '%s: %s' % (self.person, self.tweet)
 
+    def get_index_data(self):
+        d = super(Tweet, self).get_index_data()
+        d['author'] = self.person.name
+        return d
+
     def process(self):
+        self.push_to_index()
         _LOG.info('processed tweet:[%s][%s]', self.pk, self.tweet_id)
 
     def process_async(self):

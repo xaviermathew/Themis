@@ -50,7 +50,7 @@ class Person(EntityBase):
             _LOG.warning('%s does not have a twitter handle', self)
             return
 
-        tweets = get_tweets_for_username(self.twitter_handle)
+        tweets = get_tweets_for_username(self.twitter_handle, settings.TWITTER_CRAWL_LIMIT)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
         for tweet in tweets:
             published_on = datetime.fromtimestamp(tweet.datetime / 1000, pytz.utc)
