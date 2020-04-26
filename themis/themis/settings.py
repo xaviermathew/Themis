@@ -219,6 +219,10 @@ ELASTICSEARCH_HOSTS = ['localhost:9200']
 connections.create_connection(hosts=ELASTICSEARCH_HOSTS)
 
 
+# Cappy
+CAPPY_PROXY = {'http': 'localhost:3030', 'https': 'localhost:3030'}
+
+
 for app in PROJECT_APPS:
     try:
         exec("from {}.app_settings import *".format(app))
