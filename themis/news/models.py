@@ -44,8 +44,9 @@ class Feed(BaseModel):
         d = feedparser.parse(self.url)
         for entry in d['entries']:
             url = entry.pop('link')
-            published_on_struct = entry.pop('published_parsed')
-            published_on = datetime.fromtimestamp(mktime(published_on_struct))
+            published_on = entry.pop('published_parsed')
+            if isinstance(published_on, struct_time):
+                published_on = datetime.fromtimestamp(mktime(published_on))
             try:
                 a = Article.objects.create(feed=self,
                                            url=url,
@@ -55,7 +56,10 @@ class Feed(BaseModel):
                                            is_top_news=self.is_top_news,
                                            metadata=entry)
             except IntegrityError as ex:
-                _LOG.info('Article with url:[%s] may already exist', url, ex)
+                if 'duplicate key value violates unique constraint' in ex.args[0]:
+                    _LOG.info('Article with url:[%s] exists', url)
+                else:
+                    raise ex
             else:
                 _LOG.info('Article created with url:[%s]', url)
                 a.process_async()
