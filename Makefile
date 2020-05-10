@@ -12,7 +12,7 @@ pull:
 update_cron:
 	crontab $(CRONTAB_FILE)
 	service cron restart
-deploy: pull
+deploy: pull update_cron
 	pip install -r requirements.txt
 	./manage.py create_search_indices
 	./manage.py migrate
