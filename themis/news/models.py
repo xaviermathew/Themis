@@ -76,7 +76,7 @@ class Article(BaseModel, NewsIndexable):
     NEWS_BODY_FIELD = 'body'
 
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
-    url = models.URLField(unique=True, max_length=512)
+    url = models.URLField(unique=True, max_length=2048)
     title = models.TextField()
     summary = models.TextField(blank=True, null=True)
     body = models.TextField(blank=True, null=True)
