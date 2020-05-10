@@ -51,7 +51,7 @@ class Feed(BaseModel):
                 a = Article.objects.create(feed=self,
                                            url=url,
                                            title=entry.pop('title'),
-                                           summary=entry.pop('summary'),
+                                           summary=entry.pop('summary', None),
                                            published_on=published_on,
                                            is_top_news=self.is_top_news,
                                            metadata=entry)
@@ -80,7 +80,7 @@ class Article(BaseModel, NewsIndexable):
     title = models.TextField()
     summary = models.TextField(blank=True, null=True)
     body = models.TextField(blank=True, null=True)
-    published_on = models.DateField()
+    published_on = models.DateField(blank=True, null=True)
     is_top_news = models.BooleanField(default=False)
     metadata = JSONField()
     is_pushed_to_index = models.BooleanField(default=False)
