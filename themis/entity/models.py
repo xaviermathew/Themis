@@ -62,7 +62,10 @@ class Person(EntityBase):
                                          published_on=published_on,
                                          metadata=metadata)
             except IntegrityError as ex:
-                _LOG.info('Tweet with id:[%s] may already exist - %s', tweet.id, ex)
+                if 'duplicate key value violates unique constraint' in ex.args[0]:
+                    _LOG.info('Tweet with id:[%s] already exists', tweet.id)
+                else:
+                    raise ex
             else:
                 _LOG.info('Tweet created with id:[%s]', tweet.id)
                 t.process_async()
