@@ -1,4 +1,4 @@
-from themis.newspaper import Article as NArticle
+from newspaper import Article as NArticle
 
 from themis.news.utils.cache_utils import DownloadCache
 

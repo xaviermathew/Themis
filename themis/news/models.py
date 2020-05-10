@@ -44,12 +44,14 @@ class Feed(BaseModel):
         d = feedparser.parse(self.url)
         for entry in d['entries']:
             url = entry.pop('link')
+            published_on_struct = entry.pop('published_parsed')
+            published_on = datetime.fromtimestamp(mktime(published_on_struct))
             try:
                 a = Article.objects.create(feed=self,
                                            url=url,
                                            title=entry.pop('title'),
                                            summary=entry.pop('summary'),
-                                           published_on=entry.pop('published_parsed'),
+                                           published_on=published_on,
                                            is_top_news=self.is_top_news,
                                            metadata=entry)
             except IntegrityError as ex:
