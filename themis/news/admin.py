@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 
-from themis.admin import BaseAdmin
-from news.models import Article, Feed, NewsSource, Tweet
+from themis.core.admin import BaseAdmin
+from themis.news.models import Article, Feed, NewsSource, Tweet
 
 
 @admin.register(Article)

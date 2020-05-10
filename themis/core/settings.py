@@ -32,9 +32,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 PROJECT_APPS = [
-    'themis',
-    'entity',
-    'news',
+    'themis.core',
+    'themis.entity',
+    'themis.news',
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'themis.urls'
+ROOT_URLCONF = 'themis.core.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'themis.wsgi.application'
+WSGI_APPLICATION = 'themis.core.wsgi.application'
 
 
 # Database
@@ -223,7 +223,6 @@ for app in PROJECT_APPS:
         print("Imported {}.app_settings".format(app))
     except ImportError as ex:
         warnings.warn("Importing {}.app_settings.py failed - ({})".format(app, ex))
-
 
 try:
     from .local import *

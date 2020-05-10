@@ -9,7 +9,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, IntegrityError
 
-from themis.models import BaseModel
+from themis.core.models import BaseModel
 
 _LOG = logging.getLogger(__name__)
 
@@ -43,8 +43,8 @@ class Person(EntityBase):
     twitter_handle = models.CharField(max_length=256)
 
     def crawl_tweets(self):
-        from news.models import Tweet
-        from news.utils.twitter_utils import get_tweets_for_username
+        from themis.news.models import Tweet
+        from themis.news.utils.twitter_utils import get_tweets_for_username
 
         if self.twitter_handle is None:
             _LOG.warning('%s does not have a twitter handle', self)
@@ -68,7 +68,7 @@ class Person(EntityBase):
                 t.process_async()
 
     def crawl_tweets_async(self):
-        from entity.tasks import crawl_tweets_async
+        from themis.entity.tasks import crawl_tweets_async
         crawl_tweets_async.apply_async(kwargs={'person_id': self.pk},
                                        queue=settings.CELERY_TASK_QUEUE_CRAWL_TWITTER,
                                        routing_key=settings.CELERY_TASK_ROUTING_KEY_CRAWL_TWITTER)

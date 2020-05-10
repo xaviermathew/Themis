@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from news.models import Feed
+from themis.news.models import Feed
 
 
 class Command(BaseCommand):

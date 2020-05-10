@@ -1,6 +1,6 @@
-from newspaper import Article as NArticle
+from themis.newspaper import Article as NArticle
 
-from news.utils.cache_utils import DownloadCache
+from themis.news.utils.cache_utils import DownloadCache
 
 
 def get_body_from_article(url):

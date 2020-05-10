@@ -6,7 +6,7 @@ from django.conf import settings
 import requests
 from urlnormalizer import normalize_url
 
-from news.utils.file_utils import ShelveFile, mkdir_p
+from themis.news.utils.file_utils import ShelveFile, mkdir_p
 
 
 class DownloadCache(object):

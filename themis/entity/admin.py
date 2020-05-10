@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 
-from entity.models import Person, Organization, Relationship, RelationshipType, OrganizationType
-from themis.admin import BaseAdmin
+from themis.entity.models import Person, Organization, Relationship, RelationshipType, OrganizationType
+from themis.core.admin import BaseAdmin
 
 
 @admin.register(Person)

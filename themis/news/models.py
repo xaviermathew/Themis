@@ -13,9 +13,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.utils import IntegrityError
 
-from entity.models import EntityBase, Person
-from news.search_indices import NewsIndexable
-from themis.models import BaseModel
+from themis.entity.models import EntityBase, Person
+from themis.news.search_indices import NewsIndexable
+from themis.core.models import BaseModel
 
 _LOG = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class Feed(BaseModel):
                 a.process_async()
 
     def crawl_feed_async(self):
-        from news.tasks import crawl_feed_async
+        from themis.news.tasks import crawl_feed_async
         crawl_feed_async.apply_async(kwargs={'feed_id': self.pk},
                                      queue=settings.CELERY_TASK_QUEUE_CRAWL_FEED,
                                      routing_key=settings.CELERY_TASK_ROUTING_KEY_CRAWL_FEED)
@@ -90,7 +90,7 @@ class Article(BaseModel, NewsIndexable):
         super(Article, self).save(*args, **kwargs)
 
     def process(self):
-        from news.utils.article_utils import get_body_from_article
+        from themis.news.utils.article_utils import get_body_from_article
 
         save_fields = []
         if self.body is None:
@@ -105,7 +105,7 @@ class Article(BaseModel, NewsIndexable):
             _LOG.info('article:[%s] - processed url:[%s]', self.pk, self.url)
 
     def process_async(self):
-        from news.tasks import process_article_async
+        from themis.news.tasks import process_article_async
         process_article_async.apply_async(kwargs={'article_id': self.pk},
                                           queue=settings.CELERY_TASK_QUEUE_PROCESS_ARTICLE,
                                           routing_key=settings.CELERY_TASK_ROUTING_KEY_PROCESS_ARTICLE)
@@ -137,7 +137,7 @@ class Tweet(BaseModel, NewsIndexable):
             _LOG.info('processed tweet:[%s][%s]', self.pk, self.tweet_id)
 
     def process_async(self):
-        from news.tasks import process_tweet_async
+        from themis.news.tasks import process_tweet_async
         process_tweet_async.apply_async(kwargs={'tweet_id': self.pk},
                                           queue=settings.CELERY_TASK_QUEUE_PROCESS_TWEET,
                                           routing_key=settings.CELERY_TASK_ROUTING_KEY_PROCESS_TWEET)

@@ -1,22 +1,25 @@
-from themis.celery import app as celery_app
+from themis.core.celery import app as celery_app
 
 
 @celery_app.task(ignore_result=True)
 def crawl_feed_async(feed_id):
-    from news.models import Feed
+    from themis.news.models import Feed
+
     feed = Feed.objects.get(pk=feed_id)
     feed.crawl_feed()
 
 
 @celery_app.task(ignore_result=True)
 def process_article_async(article_id):
-    from news.models import Article
+    from themis.news.models import Article
+
     article = Article.objects.get(pk=article_id)
     article.process()
 
 
 @celery_app.task(ignore_result=True)
 def process_tweet_async(tweet_id):
-    from news.models import Tweet
+    from themis.news.models import Tweet
+
     tweet = Tweet.objects.get(pk=tweet_id)
     tweet.process()

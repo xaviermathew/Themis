@@ -2,7 +2,7 @@ import operator
 
 from django.db import models
 
-from themis.models import EntityBase
+from themis.core.models import EntityBase
 
 
 def get_entity_type_choices():
