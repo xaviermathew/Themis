@@ -11,7 +11,7 @@ pull:
 	git pull
 update_cron:
 	crontab $(CRONTAB_FILE)
-	service cron restart
+	sudo service cron restart
 deploy: pull update_cron
 	pip install -r requirements.txt
 	./manage.py create_search_indices
