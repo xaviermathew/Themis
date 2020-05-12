@@ -29,5 +29,5 @@ class FeedAdmin(BaseAdmin):
 
 @admin.register(Tweet)
 class TweetAdmin(BaseAdmin):
-    list_display = ['person', 'tweet', 'published_on']
-    list_filter = ['person', 'published_on']
+    list_display = ['entity', 'tweet', 'published_on']
+    list_filter = ['entity', 'published_on']

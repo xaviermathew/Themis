@@ -8,6 +8,8 @@ import urllib.parse as urlparse
 import feedparser
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -120,7 +122,9 @@ class Article(BaseModel, NewsIndexable):
 class Tweet(BaseModel, NewsIndexable):
     NEWS_TITLE_FIELD = 'tweet'
 
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    entity = GenericForeignKey('content_type', 'object_id')
     tweet_id = models.BigIntegerField(unique=True)
     tweet = models.TextField()
     published_on = models.DateTimeField()
@@ -132,7 +136,7 @@ class Tweet(BaseModel, NewsIndexable):
 
     def get_index_data(self):
         d = super(Tweet, self).get_index_data()
-        d['author'] = self.person.name
+        d['author'] = self.entity.name if self.entity else self.person.name
         return d
 
     def process(self):
