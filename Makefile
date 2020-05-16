@@ -16,12 +16,12 @@ update_cron:
 	crontab $(CRONTAB_FILE)
 	sudo service cron restart
 update_systemd:
-	cp config/systemd/* /etc/systemd/user/
+	sudo cp config/systemd/* /etc/systemd/system/
 	sudo systemctl daemon-reload
 	sudo systemctl restart gunicorn
 	sudo systemctl restart celery
 static:
-	./manage.py collectstatic --noinput
+	# ./manage.py collectstatic --noinput
 migrate:
 	./manage.py migrate
 	./manage.py create_search_indices
