@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
+VIRTUALENV_BIN=/home/ubuntu/virtual_env/themis/bin
+cd /home/ubuntu/Themis
+source $VIRTUALENV_BIN/activate && source $VIRTUALENV_BIN/postactivate
 
-source activate && source postactivate
-
-exec gunicorn themis.core.wsgi \
+exec $VIRTUALENV_BIN/gunicorn themis.core.wsgi \
   --name "Themis" \
   --workers 1 \
   --bind=0.0.0.0:8000 \

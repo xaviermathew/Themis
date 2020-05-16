@@ -6,7 +6,7 @@ from themis.news.models import Article, Feed, NewsSource, Tweet
 
 @admin.register(Article)
 class ArticleAdmin(BaseAdmin):
-    list_display = ['feed', 'title']
+    list_display = ['feed', 'title', 'published_on']
     list_filter = ['feed__source', 'is_top_news', 'is_pushed_to_index']
 
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+VIRTUALENV_BIN=/home/ubuntu/virtual_env/themis/bin
+cd /home/ubuntu/Themis
+source $VIRTUALENV_BIN/activate && source $VIRTUALENV_BIN/postactivate
+
 CMD=$(cat <<COMMAND_SUFFIX
     2
 	-A themis.core
@@ -13,7 +17,6 @@ CMD=$(cat <<COMMAND_SUFFIX
 COMMAND_SUFFIX
 )
 
-source activate && source postactivate
 echo "stopping celery"
 DJANGO_SETTINGS_MODULE=themis.core.settings celery multi stop $CMD
 echo "waiting for 3s"
