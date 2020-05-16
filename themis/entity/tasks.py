@@ -4,7 +4,7 @@ from themis.core.celery import app as celery_app
 
 
 @celery_app.task(ignore_result=True)
-def crawl_tweets_async(entity_ct, entity_id):
+def crawl_tweets_async(entity_ct, entity_id, limit):
     klass = ContentType.objects.get_for_id(entity_ct)
     entity = klass.objects.get(pk=entity_id)
-    entity.crawl_tweets()
+    entity.crawl_tweets(limit)

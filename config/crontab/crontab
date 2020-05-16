@@ -2,5 +2,5 @@ MAILTO=xaviermathew90@gmail.com
 SHELL=/bin/bash
 
 00 * * * * cd /home/ubuntu/virtual_env/themis/bin/ && source activate && source postactivate && python manage.py import_feeds_from_google_sheet > logs/import_feeds_from_google_sheet.log 2>&1
-05 * * * * cd /home/ubuntu/virtual_env/themis/bin/ && source activate && source postactivate && python manage.py crawl_tweets > logs/crawl_tweets.log 2>&1
+05 * * * * cd /home/ubuntu/virtual_env/themis/bin/ && source activate && source postactivate && python manage.py crawl_tweets --limit 100 > logs/crawl_tweets.log 2>&1
 30 * * * * cd /home/ubuntu/virtual_env/themis/bin/ && source activate && source postactivate && python manage.py crawl_feeds > logs/crawl_feeds.log 2>&1
