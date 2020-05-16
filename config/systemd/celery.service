@@ -2,10 +2,13 @@
 Description=celery daemon
 
 [Service]
+Type=forking
 User=ubuntu
 Group=ubuntu
 WorkingDirectory=/home/ubuntu/Themis
-ExecStart=/home/ubuntu/Themis/config/celery/celery.sh
+ExecStart=/home/ubuntu/Themis/config/celery/celery.sh start
+ExecStop=/home/ubuntu/Themis/config/celery/celery.sh stopwait
+ExecReload=/home/ubuntu/Themis/config/celery/celery.sh restart
 
 [Install]
 WantedBy=multi-user.target
