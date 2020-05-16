@@ -1,0 +1,11 @@
+[Unit]
+Description=celery daemon
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=$HOME/Themis
+ExecStart=$HOME/Themis/config/celery/celery.sh
+
+[Install]
+WantedBy=multi-user.target
