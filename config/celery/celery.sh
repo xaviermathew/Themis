@@ -18,8 +18,8 @@ COMMAND_SUFFIX
 )
 
 echo "stopping celery"
-DJANGO_SETTINGS_MODULE=themis.core.settings celery multi stop $CMD
+DJANGO_SETTINGS_MODULE=themis.core.settings $VIRTUALENV_BIN/celery multi stop $CMD
 echo "waiting for 3s"
 sleep 3
 echo "starting celery"
-DJANGO_SETTINGS_MODULE=themis.core.settings celery multi restart $CMD
+DJANGO_SETTINGS_MODULE=themis.core.settings $VIRTUALENV_BIN/celery multi restart $CMD
