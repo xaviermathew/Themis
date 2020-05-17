@@ -1,4 +1,6 @@
+from collections import defaultdict
 from django.contrib import admin, messages
+from django.contrib.contenttypes.models import ContentType
 
 from themis.core.admin import BaseAdmin
 from themis.news.models import Article, Feed, NewsSource, Tweet
@@ -27,7 +29,40 @@ class FeedAdmin(BaseAdmin):
             feed.crawl_feed_async()
 
 
+class TweetEntityFilter(admin.SimpleListFilter):
+   title = 'By Entity'
+   parameter_name = 'entity'
+   _cached_lookups = None
+
+   def _get_lookups(self):
+       ct_id_pairs = Tweet.objects.order_by('content_type', 'object_id')\
+                                  .distinct('content_type', 'object_id')\
+                                  .values_list('content_type', 'object_id')
+       ct_id_map = defaultdict(set)
+       for ct, id in ct_id_pairs:
+           ct_id_map[ct].add(id)
+       choices = []
+       for ct, id_set in ct_id_map.items():
+           klass = ContentType.objects.get_for_id(ct).model_class()
+           qs = klass.objects.filter(pk__in=id_set).values_list('id', 'name')
+           for id, name in qs:
+            choices.append(('%s.%s' % (ct, id), '%s:%s' % (klass.__name__, name)))
+       return choices
+
+   def lookups(self, request, model_admin):
+       if self._cached_lookups is None:
+           self._cached_lookups = self._get_lookups()
+       return self._cached_lookups
+
+   def queryset(self, request, queryset):
+       value = self.value()
+       if value and value in self._cached_lookups:
+           ct, id = value.split('.')
+           queryset = queryset.filter(content_type=ct, object_id=id)
+       return queryset
+
+
 @admin.register(Tweet)
 class TweetAdmin(BaseAdmin):
     list_display = ['entity', 'tweet', 'published_on']
-    list_filter = ['entity', 'published_on']
+    list_filter = [TweetEntityFilter, 'published_on']
