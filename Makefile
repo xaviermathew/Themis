@@ -25,6 +25,7 @@ static:
 migrate:
 	./manage.py migrate
 	./manage.py create_search_indices
-fresh_code: pull make_dirs migrate static
+pip:
 	pip install -r requirements.txt
+fresh_code: pull pip make_dirs migrate static
 deploy: fresh_code update_cron update_systemd

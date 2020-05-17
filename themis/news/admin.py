@@ -30,9 +30,10 @@ class FeedAdmin(BaseAdmin):
 
 
 class TweetEntityFilter(admin.SimpleListFilter):
-   title = 'By Entity'
+   title = 'Entity'
    parameter_name = 'entity'
    _cached_lookups = None
+   _cached_lookups_map = None
 
    def _get_lookups(self):
        ct_id_pairs = Tweet.objects.order_by('content_type', 'object_id')\
@@ -52,11 +53,12 @@ class TweetEntityFilter(admin.SimpleListFilter):
    def lookups(self, request, model_admin):
        if self._cached_lookups is None:
            self._cached_lookups = self._get_lookups()
+           self._cached_lookups_map = dict(self._cached_lookups)
        return self._cached_lookups
 
    def queryset(self, request, queryset):
        value = self.value()
-       if value and value in self._cached_lookups:
+       if value and value in self._cached_lookups_map:
            ct, id = value.split('.')
            queryset = queryset.filter(content_type=ct, object_id=id)
        return queryset
