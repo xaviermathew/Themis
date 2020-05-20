@@ -15,7 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.utils import IntegrityError
 
-from themis.entity.models import EntityBase, Person
+from themis.entity.models import EntityBase
 from themis.news.search_indices import NewsIndexable
 from themis.core.models import BaseModel
 
@@ -132,11 +132,11 @@ class Tweet(BaseModel, NewsIndexable):
     is_pushed_to_index = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s: %s' % (self.person, self.tweet)
+        return '%s: %s' % (self.entity, self.tweet)
 
     def get_index_data(self):
         d = super(Tweet, self).get_index_data()
-        d['author'] = self.entity.name if self.entity else self.person.name
+        d['author'] = self.entity.name if self.entity else self.entity.name
         return d
 
     def process(self):
