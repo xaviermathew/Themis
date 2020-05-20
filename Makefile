@@ -10,6 +10,7 @@ make_dirs:
 	mkdir -p $(PROJECT_DIR)/logs/celery/
 	mkdir -p $(PROJECT_DIR)/pids/
 	mkdir -p $(PROJECT_DIR)/pids/celery/
+	mkdir -p $(PROJECT_DIR)/static/
 pull:
 	git pull
 update_cron:
