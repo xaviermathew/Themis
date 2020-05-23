@@ -35,7 +35,7 @@ class NewsSource(EntityBase):
 
 class Feed(BaseModel):
     name = models.TextField()
-    url = models.URLField()
+    url = models.URLField(unique=True)
     source = models.ForeignKey(NewsSource, on_delete=models.CASCADE)
     is_top_news = models.BooleanField()
 
