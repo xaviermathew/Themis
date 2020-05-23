@@ -4,7 +4,7 @@ from themis.core.models import BaseModel
 
 
 class EntityBase(BaseModel):
-    name = models.TextField()
+    name = models.TextField(unique=True)
 
     class Meta:
         abstract = True
