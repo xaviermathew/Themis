@@ -10,5 +10,4 @@ $VIRTUALENV_BIN/gunicorn themis.core.wsgi \
   --log-level=info \
   --timeout=30 \
   --log-file=logs/gunicorn.log \
-  --log-file=- \
   --env DJANGO_SETTINGS_MODULE=themis.core.settings
