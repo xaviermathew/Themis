@@ -22,7 +22,7 @@ update_systemd:
 	sudo systemctl restart gunicorn
 	sudo systemctl restart celery
 static:
-	# ./manage.py collectstatic --noinput
+	./manage.py collectstatic --noinput
 migrate:
 	./manage.py migrate
 	./manage.py create_search_indices
