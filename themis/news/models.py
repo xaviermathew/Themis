@@ -143,7 +143,7 @@ class Tweet(BaseModel, NewsIndexable):
         if not self.is_pushed_to_index:
             self.push_to_index()
             self.is_pushed_to_index = True
-            self.save()
+            self.save(update_fields=['is_pushed_to_index'])
             _LOG.info('processed tweet:[%s][%s]', self.pk, self.tweet_id)
 
     def process_async(self):
