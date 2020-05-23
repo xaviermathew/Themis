@@ -1,0 +1,33 @@
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.container {
+  max-width: 960px;
+}
+
+.themis-header {
+  max-width: 700px;
+}
+
+.has-search .form-control {
+    padding-left: 2.6rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.9rem;
+    height: 2.9rem;
+    line-height: 2.9rem;
+    font-size: 1.3rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
