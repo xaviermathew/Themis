@@ -11,7 +11,7 @@ from themis.news.models import Tweet, Article
 
 def get_search_results(q):
     client = connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
-    s = Search(using=client, index="news").filter("term", title=q)
+    s = Search(using=client, index="news").filter("simple_query_string", query=q, fields=['title', 'author'])
     return s.count(), itertools.islice(s.scan(), 500)
 
 
