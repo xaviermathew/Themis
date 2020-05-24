@@ -7,5 +7,6 @@ from themis.core import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + [
     url(r'^$', views.home),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
