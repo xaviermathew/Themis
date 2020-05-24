@@ -29,9 +29,11 @@
           <input type="text" class="form-control form-control-lg" name="q" value="{{ q }}" placeholder="Search">
         </div>
       </form>
-
       {% if q %}<p>Found {{ num_results }} result(s)</p>{% endif %}
+    </div>
 
+    {% if q %}
+    <div class="row px-3 py-3 pt-md-5 pb-md-4 mx-auto themis-results">
       <table class="table">
         <thead>
           <tr>
@@ -49,6 +51,7 @@
         </tbody>
       </table>
     </div>
+    {% endif %}
 
     <div class="container">
       <footer class="pt-4 my-md-5 pt-md-5 border-top">

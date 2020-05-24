@@ -97,6 +97,11 @@ class Article(BaseModel, NewsIndexable):
                 self.url = urlparse.parse_qs(parsed.query)['url'][0]
         super(Article, self).save(*args, **kwargs)
 
+    def get_index_data(self):
+        d = super(Article, self).get_index_data()
+        d['author'] = self.feed.source.name
+        return d
+
     def process(self):
         from themis.news.utils.article_utils import get_body_from_article
 

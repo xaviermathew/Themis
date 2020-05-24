@@ -31,3 +31,6 @@ html {
     pointer-events: none;
     color: #aaa;
 }
+.themis-results {
+    max-width: 1000px;
+}
