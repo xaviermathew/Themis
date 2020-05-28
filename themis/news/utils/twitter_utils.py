@@ -1,7 +1,7 @@
 import twint
 
 
-def get_tweets_for_username(username, limit=100):
+def get_tweets_for_username(username, limit=None):
     c = twint.Config()
 
     c.Username = username
