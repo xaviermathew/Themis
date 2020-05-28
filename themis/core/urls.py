@@ -10,6 +10,8 @@ from themis.core import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    re_path(r'^%s(?P<path>.*)$' % re.escape(settings.STATIC_URL.lstrip('/')), serve, document_root=settings.STATIC_ROOT),
+    re_path(r'^%s(?P<path>.*)$' % re.escape(settings.STATIC_URL.lstrip('/')),
+            serve,
+            kwargs={'document_root': settings.STATIC_ROOT}),
     url(r'^$', views.home),
 ]
