@@ -226,6 +226,19 @@ CELERY_TASK_QUEUES = (
 ELASTICSEARCH_HOSTS = ['localhost:9200']
 
 
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
+
 for app in PROJECT_APPS:
     try:
         exec("from {}.app_settings import *".format(app))

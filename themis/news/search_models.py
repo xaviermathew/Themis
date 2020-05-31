@@ -2,7 +2,7 @@ from django.db import models
 
 
 class NewsIndex(models.Model):
-    id = models.TextField()
+    id = models.TextField(primary_key=True)
     author = models.TextField()
     title = models.TextField()
     body = models.TextField()
