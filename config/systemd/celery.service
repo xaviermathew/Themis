@@ -5,10 +5,10 @@ Description=celery daemon
 Type=forking
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/Themis
-ExecStart=/home/ubuntu/Themis/config/celery/celery.sh start
-ExecStop=/home/ubuntu/Themis/config/celery/celery.sh stopwait
-ExecReload=/home/ubuntu/Themis/config/celery/celery.sh restart
+WorkingDirectory=/home/ubuntu/Mnemonic
+ExecStart=/home/ubuntu/Mnemonic/config/celery/celery.sh start
+ExecStop=/home/ubuntu/Mnemonic/config/celery/celery.sh stopwait
+ExecReload=/home/ubuntu/Mnemonic/config/celery/celery.sh restart
 
 [Install]
 WantedBy=multi-user.target

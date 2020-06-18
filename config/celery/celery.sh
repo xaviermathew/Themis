@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-VIRTUALENV_BIN=/home/ubuntu/virtual_env/themis/bin
-cd /home/ubuntu/Themis
+VIRTUALENV_BIN=/home/ubuntu/virtual_env/mnemonic/bin
+cd /home/ubuntu/Mnemonic
 source $VIRTUALENV_BIN/activate && source $VIRTUALENV_BIN/postactivate
 
 echo "${1-start}ing celery"
-DJANGO_SETTINGS_MODULE=themis.core.settings $VIRTUALENV_BIN/celery multi ${1} \
+DJANGO_SETTINGS_MODULE=mnemonic.core.settings $VIRTUALENV_BIN/celery multi ${1} \
     2 \
-	-A themis.core \
+	-A mnemonic.core \
     --pidfile=pids/celery/%N.pid \
     --hostname=celery%i@%h \
 	-l INFO \

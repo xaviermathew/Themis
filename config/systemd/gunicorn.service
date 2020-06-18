@@ -4,8 +4,8 @@ Description=gunicorn daemon
 [Service]
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/Themis
-ExecStart=/home/ubuntu/Themis/config/gunicorn/gunicorn.sh
+WorkingDirectory=/home/ubuntu/Mnemonic
+ExecStart=/home/ubuntu/Mnemonic/config/gunicorn/gunicorn.sh
 
 [Install]
 WantedBy=multi-user.target
