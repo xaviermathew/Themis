@@ -1,6 +1,6 @@
 PROJECT_DIR=`pwd`
 VIRTUAL_ENV_ROOT=$(HOME)/virtual_env
-VIRTUAL_ENV_NAME=polidicks
+VIRTUAL_ENV_NAME=mnemonic
 CRONTAB_FILE=config/crontab/crontab
 
 link_manage_py:
