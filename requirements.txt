@@ -20,7 +20,7 @@ click==7.1.1
 cryptography==2.9.2
 cssselect==1.1.0
 decorator==4.4.2
-Django==3.0.5
+Django==3.0.7
 django-extensions==2.2.9
 djangorestframework==3.11.0
 elasticsearch==7.6.0
