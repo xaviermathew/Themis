@@ -1,18 +1,7 @@
-import itertools
-
-from elasticsearch_dsl import Search
-from elasticsearch_dsl.connections import connections
-
-from django.conf import settings
 from django.shortcuts import render
 
 from mnemonic.news.models import Tweet, Article
-
-
-def get_search_results(q):
-    client = connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
-    s = Search(using=client, index="news").filter("simple_query_string", query=q, fields=['title', 'author'])
-    return s.count(), itertools.islice(s.scan(), 500)
+from mnemonic.news.utils.search_utils import get_search_results
 
 
 def home(request):

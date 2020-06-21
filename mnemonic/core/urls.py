@@ -12,6 +12,7 @@ from mnemonic.core import views
 
 _LOG = logging.getLogger(__name__)
 
+
 api_urls = []
 for app_label in settings.PROJECT_APPS:
     try:
@@ -20,6 +21,15 @@ for app_label in settings.PROJECT_APPS:
         _LOG.warning('error importing router for app:%s - %s' % (app_label, ex))
     else:
         api_urls.extend(router.urls)
+
+    if app_label != 'mnemonic.core':
+        try:
+            app_urlpatterns = importlib.import_module('%s.urls' % app_label).urlpatterns
+        except ModuleNotFoundError as ex:
+            _LOG.warning('error importing urls for app:%s - %s' % (app_label, ex))
+        else:
+            api_urls.extend(app_urlpatterns)
+
 
 urlpatterns = [
     url(r'^$', views.home),

@@ -10,8 +10,12 @@ class News(Document):
     author = Text(analyzer='snowball', fields={'raw': Keyword()})
     title = Text(analyzer='snowball', fields={'raw': Keyword()})
     body = Text(analyzer='snowball')
+
     class Index:
         name = 'news'
+
+    class Meta:
+        doc_type = '_doc'
 
 
 class NewsIndexable(object):

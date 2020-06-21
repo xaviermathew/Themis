@@ -37,7 +37,8 @@ PROJECT_APPS = [
     'mnemonic.news',
 ]
 THIRD_PARTY_APPS = [
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 INSTALLED_APPS = PROJECT_APPS + [
     'django.contrib.admin',
@@ -49,6 +50,7 @@ INSTALLED_APPS = PROJECT_APPS + [
 ] + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -228,15 +230,16 @@ ELASTICSEARCH_HOSTS = ['localhost:9200']
 
 # DRF
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': (),
+    'DEFAULT_AUTHENTICATION_CLASSES': (),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    'SEARCH_PARAM': 'q'
 }
+
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 for app in PROJECT_APPS:

@@ -92,3 +92,4 @@ Werkzeug==1.0.1
 wmctrl==0.3
 yarl==1.4.2
 zipp==3.1.0
+-e git+https://github.com/xaviermathew/django-rest-elasticsearch.git@master#egg=django-rest-elasticsearch
