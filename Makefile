@@ -11,6 +11,8 @@ make_dirs:
 	mkdir -p $(PROJECT_DIR)/pids/
 	mkdir -p $(PROJECT_DIR)/pids/celery/
 	mkdir -p $(PROJECT_DIR)/static/
+	mkdir -p $(PROJECT_DIR)/state
+	touch $(PROJECT_DIR)/state/logrotate-state
 pull:
 	git pull
 update_cron:
