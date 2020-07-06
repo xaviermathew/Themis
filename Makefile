@@ -19,6 +19,7 @@ update_cron:
 update_systemd:
 	sudo cp config/systemd/* /etc/systemd/system/
 	sudo systemctl daemon-reload
+restart:
 	sudo systemctl restart gunicorn
 	sudo systemctl restart celery
 static:
@@ -29,4 +30,4 @@ migrate:
 pip:
 	pip install -r requirements.txt
 fresh_code: pull pip make_dirs migrate static
-deploy: fresh_code update_cron update_systemd
+deploy: fresh_code update_cron update_systemd restart

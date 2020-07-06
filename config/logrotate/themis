@@ -1,0 +1,7 @@
+/home/ubuntu/Mnemonic/logs/*.log /home/ubuntu/Mnemonic/logs/celery/*.log {
+    daily
+    missingok
+    rotate 5
+    notifempty
+    su ubuntu ubuntu
+}
