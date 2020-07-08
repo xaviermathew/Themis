@@ -31,5 +31,10 @@ migrate:
 	./manage.py create_search_indices
 pip:
 	pip install -r requirements.txt
+backup_article_cache:
+	DEST_FNAME=cache_articles_`date +%F`.tar.gz
+	find data/cache/articles/ -type f -mtime +1 | tar cfvz $(PROJECT_DIR)/data/$(DEST_FNAME) --remove-files -T -
+	glacier_upload -v mnemonic-data -f data/$(DEST_FNAME) -d $(DEST_FNAME)
+	rm $(DEST_FNAME)
 fresh_code: pull pip make_dirs migrate static
 deploy: fresh_code update_cron update_systemd restart
