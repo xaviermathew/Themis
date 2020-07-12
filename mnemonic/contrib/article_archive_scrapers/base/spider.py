@@ -19,6 +19,7 @@ class BaseArchiveSpider(scrapy.Spider):
     @staticmethod
     def get_settings():
         d = get_project_settings()
+        d['LOG_LEVEL'] = 'INFO'
         d['ITEM_PIPELINES'] = {get_python_path(ArticleItemPipeline): 100}
         d['DOWNLOADER_MIDDLEWARES'] = {'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 100}
         d['HTTPCACHE_ENABLED'] = True

@@ -161,11 +161,11 @@ LOGGING = {
             'propagate': False,
         },
         'asyncio': {
-            'level': 'INFO',
+            'level': 'WARNING',
             'propagate': False,
         },
         'parso': {
-            'level': 'INFO',
+            'level': 'WARNING',
             'propagate': False,
         },
     },
