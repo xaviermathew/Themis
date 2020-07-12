@@ -1,10 +1,11 @@
 import hashlib
 import os
 
-from django.conf import settings
-
 import requests
+from scrapy.extensions.httpcache import FilesystemCacheStorage
 from urlnormalizer import normalize_url
+
+from django.conf import settings
 
 from mnemonic.news.utils.file_utils import ShelveFile, mkdir_p
 
@@ -20,6 +21,8 @@ class DownloadCache(object):
         return os.path.exists(self.cache_path)
 
     def cache(self, html):
+        if not isinstance(html, str):
+            html = str(html)
         mkdir_p(os.path.dirname(self.cache_path))
         with ShelveFile(self.cache_path) as f:
             f.write(html)
@@ -35,3 +38,13 @@ class DownloadCache(object):
         html = r.text
         self.cache(html)
         return html
+
+
+class DownloadCacheStorage(FilesystemCacheStorage):
+    def store_response(self, spider, request, response):
+        DownloadCache(request.url).cache(response.body)
+        return super(DownloadCacheStorage, self).store_response(spider, request, response)
+
+    def retrieve_response(self, spider, request):
+        response = super(DownloadCacheStorage, self).retrieve_response(spider, request)
+        return response

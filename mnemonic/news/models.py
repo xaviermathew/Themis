@@ -6,6 +6,7 @@ import logging
 import urllib.parse as urlparse
 
 import feedparser
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -18,6 +19,7 @@ from django.db.utils import IntegrityError
 from mnemonic.entity.models import EntityBase
 from mnemonic.news.search_indices import NewsIndexable
 from mnemonic.core.models import BaseModel
+from mnemonic.news.utils.queryset_utils import CachedManager
 
 _LOG = logging.getLogger(__name__)
 
@@ -30,7 +32,7 @@ class JSONWithTimeEncoder(DjangoJSONEncoder):
 
 
 class NewsSource(EntityBase):
-    pass
+    objects = CachedManager()
 
 
 class Feed(BaseModel):
@@ -38,6 +40,9 @@ class Feed(BaseModel):
     url = models.URLField(unique=True)
     source = models.ForeignKey(NewsSource, on_delete=models.CASCADE)
     is_top_news = models.BooleanField()
+    is_archive = models.BooleanField(default=False)
+
+    objects = CachedManager()
 
     def __str__(self):
         return '%s:%s' % (self.source, self.name)
