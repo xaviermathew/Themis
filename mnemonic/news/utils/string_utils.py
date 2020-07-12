@@ -1,6 +1,7 @@
 import string
 
 PUNCT = set(string.punctuation)
+PUNCT.add(' ')
 
 
 def slugify(s, joiner='_'):
@@ -10,4 +11,4 @@ def slugify(s, joiner='_'):
             result.append(joiner)
         else:
             result.append(c)
-    return joiner.join(''.join(result).split(joiner))
+    return joiner.join(filter(bool, ''.join(result).split(joiner)))
