@@ -24,6 +24,9 @@ update_systemd:
 restart:
 	sudo systemctl restart gunicorn
 	sudo systemctl restart celery
+stop:
+	sudo systemctl stop gunicorn
+	sudo systemctl stop celery
 static:
 	./manage.py collectstatic --noinput
 migrate:
