@@ -9,7 +9,6 @@ from mnemonic.contrib.article_archive_scrapers.base.spider import BaseArchiveSpi
 
 class ArchiveSpider(BaseArchiveSpider):
     name = 'the_hindu'
-    feed_name = 'The Hindu Archive'
     feed_url = 'https://www.thehindu.com/archive'
     news_source_name = 'The Hindu Archive'
 
