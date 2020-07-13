@@ -12,3 +12,8 @@ def slugify(s, joiner='_'):
         else:
             result.append(c)
     return joiner.join(filter(bool, ''.join(result).split(joiner)))
+
+
+def clean(s):
+    s1 = ''.join([c if ord(c) < 128 else ' ' for c in s])
+    return ' '.join(s1.split())
