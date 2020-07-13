@@ -47,7 +47,7 @@ class DownloadCacheStorage(FilesystemCacheStorage):
 
     def retrieve_response(self, spider, request):
         response = super(DownloadCacheStorage, self).retrieve_response(spider, request)
-        if response.status >= 400:
+        if response and response.status >= 400:
             return None
         else:
             return response
