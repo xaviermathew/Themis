@@ -21,7 +21,7 @@ class ArchiveSpider(BaseArchiveSpider):
     def parse_archive_index(self, response):
         for day in response.xpath('//*[@id="box_left"]/div/table/tbody/tr/td/div/div/table/tr/td/a'):
             day_url = day.attrib.get('href')
-            if day_url:
+            if day_url and '/old/' not in day_url:
                 parts = list(map(int, day_url.strip('/').split('/')[-3:]))
                 meta = copy.deepcopy(response.meta)
                 meta['article']['published_on'] = datetime(year=parts[2], month=parts[1], day=parts[0])
