@@ -48,6 +48,10 @@ class Feed(BaseModel):
         return '%s:%s' % (self.source, self.name)
 
     def crawl_feed(self):
+        if self.is_archive:
+            _LOG.warning('cant crawl archive feed')
+            return
+
         d = feedparser.parse(self.url)
         for entry in d['entries']:
             url = entry.pop('link')

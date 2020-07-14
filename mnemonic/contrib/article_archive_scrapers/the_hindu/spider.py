@@ -22,7 +22,7 @@ class ArchiveSpider(BaseArchiveSpider):
         for month in response.xpath('//*[@id="archiveWebContainer" or @id="archiveTodayContainer"]/div[2]/ul/li/a'):
             month_url = month.attrib.get('href')
             if month_url:
-                yield scrapy.Request(url=month_url, callback=self.parse_month_index, meta=response.meta)
+                yield response.follow(url=month_url, callback=self.parse_month_index, meta=response.meta)
                 if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                     break
 
@@ -33,7 +33,7 @@ class ArchiveSpider(BaseArchiveSpider):
                 parts = list(map(int, day_url.strip('/').split('/')[-3:]))
                 meta = copy.deepcopy(response.meta)
                 meta['article']['published_on'] = datetime(year=parts[0], month=parts[1], day=parts[2])
-                yield scrapy.Request(url=day_url, callback=self.parse_day_index, meta=meta)
+                yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
                 if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                     break
 
@@ -44,6 +44,6 @@ class ArchiveSpider(BaseArchiveSpider):
                 meta = copy.deepcopy(response.meta)
                 meta['article']['metadata'] = {'section': section_title}
                 meta['article']['title'] = article.xpath('text()').get().strip()
-                yield scrapy.Request(url=article.attrib['href'], callback=self.parse_article, meta=meta)
+                yield response.follow(url=article.attrib['href'], callback=self.parse_article, meta=meta)
                 if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                     break
