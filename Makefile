@@ -14,7 +14,7 @@ make_dirs:
 	mkdir -p $(PROJECT_DIR)/state
 	touch $(PROJECT_DIR)/state/logrotate-state
 swap:
-    TOTAL_MEMORY=`expr $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024`
+	TOTAL_MEMORY=`expr $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024`
 	sudo /bin/dd if=/dev/zero of=/var/swap bs=1M count=$(TOTAL_MEMORY)
 	sudo /sbin/mkswap /var/swap
 	sudo chmod 600 /var/swap
