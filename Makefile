@@ -6,12 +6,11 @@ CRONTAB_FILE=config/crontab/crontab
 link_manage_py:
 	ln -s $(PROJECT_DIR)/manage.py $(VIRTUAL_ENV_ROOT)/$(VIRTUAL_ENV_NAME)/bin/manage.py
 make_dirs:
-	mkdir -p $(PROJECT_DIR)/logs/
 	mkdir -p $(PROJECT_DIR)/logs/celery/
-	mkdir -p $(PROJECT_DIR)/pids/
 	mkdir -p $(PROJECT_DIR)/pids/celery/
 	mkdir -p $(PROJECT_DIR)/static/
 	mkdir -p $(PROJECT_DIR)/state
+	mkdir -p $(PROJECT_DIR)/data/cache
 	touch $(PROJECT_DIR)/state/logrotate-state
 swap:
 	TOTAL_MEMORY=`expr $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024`
