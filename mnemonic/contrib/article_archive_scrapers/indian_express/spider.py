@@ -26,9 +26,10 @@ class ArchiveSpider(BaseArchiveSpider):
                 parts = list(map(int, day_url.strip('/').split('/')[-3:]))
                 meta = copy.deepcopy(response.meta)
                 meta['article']['published_on'] = datetime(year=parts[2], month=parts[1], day=parts[0])
-                yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
-                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                    break
+                if self.is_url_valid(url=day_url, response=response):
+                    yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
+                    if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                        break
 
     def parse_day_index(self, response):
         for section in response.xpath('//*[@id="box_left"]/div/div[*]'):
@@ -38,6 +39,7 @@ class ArchiveSpider(BaseArchiveSpider):
                 meta['article']['metadata'] = {'section': clean(section_title)}
                 meta['article']['title'] = article.xpath('text()').get().strip()
                 url = article.xpath('a/@href').get()
-                yield from self.crawl_article(response, url, meta=meta)
-                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                    break
+                if self.is_url_valid(url=url, response=response):
+                    yield self.crawl_article(response, url, meta=meta)
+                    if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                        break

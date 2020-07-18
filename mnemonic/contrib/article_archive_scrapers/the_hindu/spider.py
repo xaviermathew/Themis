@@ -21,7 +21,7 @@ class ArchiveSpider(BaseArchiveSpider):
     def parse_archive_index(self, response):
         for month in response.xpath('//*[@id="archiveWebContainer" or @id="archiveTodayContainer"]/div[2]/ul/li/a'):
             month_url = month.attrib.get('href')
-            if month_url:
+            if month_url and self.is_url_valid(url=month_url, response=response):
                 yield response.follow(url=month_url, callback=self.parse_month_index, meta=response.meta)
                 if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                     break
@@ -33,9 +33,10 @@ class ArchiveSpider(BaseArchiveSpider):
                 parts = list(map(int, day_url.strip('/').split('/')[-3:]))
                 meta = copy.deepcopy(response.meta)
                 meta['article']['published_on'] = datetime(year=parts[0], month=parts[1], day=parts[2])
-                yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
-                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                    break
+                if self.is_url_valid(url=day_url, response=response):
+                    yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
+                    if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                        break
 
     def parse_day_index(self, response):
         for section in response.xpath('/html/body/div[2]/section[1]/div/div/div/div/section'):
@@ -44,6 +45,8 @@ class ArchiveSpider(BaseArchiveSpider):
                 meta = copy.deepcopy(response.meta)
                 meta['article']['metadata'] = {'section': section_title}
                 meta['article']['title'] = article.xpath('text()').get().strip()
-                yield from self.crawl_article(response, article.attrib['href'], meta=meta)
-                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                    break
+                url = article.attrib['href']
+                if self.is_url_valid(url=url, response=response):
+                    yield self.crawl_article(response, url, meta=meta)
+                    if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                        break

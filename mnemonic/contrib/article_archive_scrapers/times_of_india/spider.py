@@ -39,7 +39,7 @@ class ArchiveSpider(BaseArchiveSpider):
     def parse_archive_index(self, response):
         for month in response.xpath('//*[@id="netspidersosh"]//a[contains(@href, "/archive/year")]'):
             month_url = month.attrib.get('href')
-            if month_url:
+            if month_url and self.is_url_valid(url=month_url, response=response):
                 yield response.follow(url=month_url, callback=self.parse_month_index, meta=response.meta)
                 if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                     break
@@ -55,9 +55,10 @@ class ArchiveSpider(BaseArchiveSpider):
             )
             meta = copy.deepcopy(response.meta)
             meta['article']['published_on'] = curr_date
-            yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
-            if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                break
+            if self.is_url_valid(url=day_url, response=response):
+                yield response.follow(url=day_url, callback=self.parse_day_index, meta=meta)
+                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                    break
 
     def parse_day_index(self, response):
         for article in response.xpath('/html/body/div/table/td/div/table/tr/td/span/a'):
@@ -65,6 +66,7 @@ class ArchiveSpider(BaseArchiveSpider):
             article_url = article.attrib['href']
             meta['article']['metadata'] = {'section': get_section_from_url(article_url)}
             meta['article']['title'] = article.xpath('text()').get().strip()
-            yield from self.crawl_article(response, article_url, meta=meta)
-            if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                break
+            if self.is_url_valid(url=article_url, response=response):
+                yield self.crawl_article(response, article_url, meta=meta)
+                if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                    break

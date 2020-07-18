@@ -68,20 +68,32 @@ class BaseArchiveSpider(scrapy.Spider):
     def parse(self, response):
         raise NotImplementedError
 
-    def crawl_article(self, response, url, meta, callback=None):
-        article_domain = self.article_domain
+    @staticmethod
+    def _split_url(response, url):
         full_url = normalize_url(response.urljoin(url))
-        url_parts = urlparse(full_url)
+        return urlparse(full_url)
+
+    def is_url_valid(self, url_parts=None, url=None, response=None):
+        if url_parts is None:
+            url_parts = self._split_url(response, url)
+        article_domain = self.article_domain
+        if article_domain is not None and url_parts.netloc != article_domain:
+            return False
+        return True
+
+    def crawl_article(self, response, url, meta, callback=None):
+        url_parts = self._split_url(response, url)
         url_checks = Q(url=url_parts._replace(scheme='http').geturl()) | \
                      Q(url=url_parts._replace(scheme='https').geturl())
-        if article_domain is not None and url_parts.netloc != article_domain:
-            self.log('Article with url:[%s] does not match domain:[%s]' % (url, article_domain))
+
+        if not self.is_url_valid(url_parts):
+            self.log('Article with url:[%s] does not match domain:[%s]' % (url, self.article_domain))
         elif Article.objects.filter(url_checks).exists():
             self.log('Article with url:[%s] exists' % url)
         else:
             if callback is None:
                 callback = self.parse_article
-            yield response.follow(url, callback=callback, meta=meta)
+            return response.follow(url, callback=callback, meta=meta)
 
     def parse_article(self, response):
         yield ArticleItem(
