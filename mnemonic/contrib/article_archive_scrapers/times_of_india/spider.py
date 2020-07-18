@@ -64,6 +64,6 @@ class ArchiveSpider(BaseArchiveSpider):
             article_url = article.attrib['href']
             meta['article']['metadata'] = {'section': get_section_from_url(article_url)}
             meta['article']['title'] = article.xpath('text()').get().strip()
-            yield self.crawl_article(response, article_url, meta=meta)
+            yield from self.crawl_article(response, article_url, meta=meta)
             if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
                 break

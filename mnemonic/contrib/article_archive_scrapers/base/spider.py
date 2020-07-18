@@ -1,8 +1,11 @@
+from urllib.parse import urlparse
+
 import scrapy
-from scrapy.exceptions import DropItem
 from scrapy.utils.project import get_project_settings
+from urlnormalizer import normalize_url
 
 from django.conf import settings
+from django.db.models import Q
 
 from mnemonic.contrib.article_archive_scrapers.base.items import ArticleItemPipeline, ArticleItem
 from mnemonic.news.models import Feed, NewsSource, Article
@@ -65,12 +68,16 @@ class BaseArchiveSpider(scrapy.Spider):
         raise NotImplementedError
 
     def crawl_article(self, response, url, meta, callback=None):
-        if Article.objects.filter(url=url).exists():
-            raise DropItem('Article with url:[%s] exists' % url)
-
-        if callback is None:
-            callback = self.parse_article
-        return response.follow(url, callback=callback, meta=meta)
+        full_url = normalize_url(response.urljoin(url))
+        url_parts = urlparse(full_url)
+        url_checks = Q(url=url_parts._replace(scheme='http').geturl()) | \
+                     Q(url=url_parts._replace(scheme='https').geturl())
+        if Article.objects.filter(url_checks).exists():
+            self.log('Article with url:[%s] exists' % url)
+        else:
+            if callback is None:
+                callback = self.parse_article
+            yield response.follow(url, callback=callback, meta=meta)
 
     def parse_article(self, response):
         yield ArticleItem(
