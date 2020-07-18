@@ -33,13 +33,15 @@ class ArchiveSpider(BaseArchiveSpider):
 
     def parse_day_index(self, response):
         for section in response.xpath('//*[@id="box_left"]/div/div[*]'):
-            section_title = section.xpath('h4/text()').get().strip()
-            for article in section.xpath('div/ul/li'):
-                meta = copy.deepcopy(response.meta)
-                meta['article']['metadata'] = {'section': clean(section_title)}
-                meta['article']['title'] = article.xpath('text()').get().strip()
-                url = article.xpath('a/@href').get()
-                if self.is_url_valid(url=url, response=response):
-                    yield self.crawl_article(response, url, meta=meta)
-                    if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
-                        break
+            section_title = section.xpath('h4/text()').get()
+            if section_title:
+                section_title = section_title.strip()
+                for article in section.xpath('div/ul/li'):
+                    meta = copy.deepcopy(response.meta)
+                    meta['article']['metadata'] = {'section': clean(section_title)}
+                    meta['article']['title'] = article.xpath('text()').get().strip()
+                    url = article.xpath('a/@href').get()
+                    if self.is_url_valid(url=url, response=response):
+                        yield self.crawl_article(response, url, meta=meta)
+                        if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
+                            break
