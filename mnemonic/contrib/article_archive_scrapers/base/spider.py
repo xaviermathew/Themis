@@ -1,9 +1,11 @@
 import scrapy
-from django.conf import settings
+from scrapy.exceptions import DropItem
 from scrapy.utils.project import get_project_settings
 
+from django.conf import settings
+
 from mnemonic.contrib.article_archive_scrapers.base.items import ArticleItemPipeline, ArticleItem
-from mnemonic.news.models import Feed, NewsSource
+from mnemonic.news.models import Feed, NewsSource, Article
 from mnemonic.news.utils.cache_utils import DownloadCacheStorage
 from mnemonic.news.utils.class_utils import get_python_path
 from mnemonic.news.utils.string_utils import slugify
@@ -61,6 +63,14 @@ class BaseArchiveSpider(scrapy.Spider):
 
     def parse(self, response):
         raise NotImplementedError
+
+    def crawl_article(self, response, url, meta, callback=None):
+        if Article.objects.filter(url=url).exists():
+            raise DropItem('Article with url:[%s] exists' % url)
+
+        if callback is None:
+            callback = self.parse_article
+        return response.follow(url, callback=callback, meta=meta)
 
     def parse_article(self, response):
         yield ArticleItem(
