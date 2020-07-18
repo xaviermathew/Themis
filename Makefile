@@ -46,3 +46,18 @@ backup_article_cache:
 	rm $(DEST_FNAME)
 fresh_code: pull pip make_dirs migrate static
 deploy: fresh_code update_cron update_systemd restart
+venv:
+	sudo add-apt-repository universe
+	sudo apt-get update
+	sudo apt-get install -y python3
+	sudo apt-get install -y python3-pip
+	sudo apt-get install -y python-dev build-essential git virtualenvwrapper
+	sudo apt-get install -y libpq-dev
+    echo -n "
+export WORKON_HOME=~/virtual_env
+source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+export VISUAL=vim
+export EDITOR=vim
+" >> $HOME/.bash_aliases
+	source $(HOME)/.bash_aliases && mkvirtualenv mnemonic --python `which python3.8`
+bootstrap: venv make_dirs link_manage_py fresh_code
