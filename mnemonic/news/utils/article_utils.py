@@ -9,7 +9,7 @@ def get_body_from_html(url, html, cache=False):
         if not dc.is_cached():
             dc.cache(html)
 
-    narticle = NArticle(url)
+    narticle = NArticle(url, fetch_images=False)
     narticle.set_html(html)
     narticle.parse()
     return narticle.text
