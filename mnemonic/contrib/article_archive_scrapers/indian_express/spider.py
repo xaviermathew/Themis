@@ -11,6 +11,7 @@ class ArchiveSpider(BaseArchiveSpider):
     name = 'indian_express'
     feed_url = 'https://archive.indianexpress.com/'
     news_source_name = 'Indian Express Archive'
+    article_domain = 'archive.indianexpress.com'
 
     def get_feed_name(self, item, body):
         return item['metadata']['section']

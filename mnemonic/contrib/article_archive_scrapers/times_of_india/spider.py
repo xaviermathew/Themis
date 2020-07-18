@@ -28,6 +28,7 @@ class ArchiveSpider(BaseArchiveSpider):
     feed_name = 'Archive'
     feed_url = 'https://timesofindia.indiatimes.com/archive.cms'
     news_source_name = 'Times of India'
+    article_domain = 'timesofindia.indiatimes.com'
 
     def get_feed_name(self, item, body):
         return item['metadata']['section']

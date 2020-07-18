@@ -20,6 +20,7 @@ class BaseArchiveSpider(scrapy.Spider):
     feed_url = None
     feed_is_top_news = False
     news_source_name = None
+    article_domain = None
 
     @staticmethod
     def get_settings():
@@ -68,11 +69,14 @@ class BaseArchiveSpider(scrapy.Spider):
         raise NotImplementedError
 
     def crawl_article(self, response, url, meta, callback=None):
+        article_domain = self.article_domain
         full_url = normalize_url(response.urljoin(url))
         url_parts = urlparse(full_url)
         url_checks = Q(url=url_parts._replace(scheme='http').geturl()) | \
                      Q(url=url_parts._replace(scheme='https').geturl())
-        if Article.objects.filter(url_checks).exists():
+        if article_domain is not None and url_parts.netloc != article_domain:
+            self.log('Article with url:[%s] does not match domain:[%s]' % (url, article_domain))
+        elif Article.objects.filter(url_checks).exists():
             self.log('Article with url:[%s] exists' % url)
         else:
             if callback is None:
