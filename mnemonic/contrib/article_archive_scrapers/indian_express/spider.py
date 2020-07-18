@@ -37,6 +37,8 @@ class ArchiveSpider(BaseArchiveSpider):
             if section_title:
                 section_title = section_title.strip()
                 for article in section.xpath('div/ul/li'):
+                    if not article:
+                        continue
                     meta = copy.deepcopy(response.meta)
                     meta['article']['metadata'] = {'section': clean(section_title)}
                     meta['article']['title'] = article.xpath('text()').get().strip()
