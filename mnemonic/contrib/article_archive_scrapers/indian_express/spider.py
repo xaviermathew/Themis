@@ -37,12 +37,14 @@ class ArchiveSpider(BaseArchiveSpider):
             if section_title:
                 section_title = section_title.strip()
                 for article in section.xpath('div/ul/li'):
-                    if not article:
+                    article_title = article.xpath('text()').get()
+                    url = article.xpath('a/@href').get()
+                    if not (article_title and url):
                         continue
+
                     meta = copy.deepcopy(response.meta)
                     meta['article']['metadata'] = {'section': clean(section_title)}
-                    meta['article']['title'] = article.xpath('text()').get().strip()
-                    url = article.xpath('a/@href').get()
+                    meta['article']['title'] = article_title.strip()
                     if self.is_url_valid(url=url, response=response):
                         yield self.crawl_article(response, url, meta=meta)
                         if settings.SHOULD_LIMIT_ARCHIVE_CRAWL:
