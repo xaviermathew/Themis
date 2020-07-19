@@ -1,12 +1,11 @@
 from django.shortcuts import render
 
-from mnemonic.news.models import Tweet, Article
-from mnemonic.news.utils.search_utils import get_search_results
+from mnemonic.news.utils.search_utils import get_search_results, get_client
 
 
 def home(request):
     ctx = {
-        'num_docs': Tweet.objects.count() + Article.objects.count()
+        'num_docs': get_client().count()
     }
     q = request.GET.get('q')
     if q:

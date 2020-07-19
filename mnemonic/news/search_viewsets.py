@@ -1,11 +1,11 @@
 from rest_framework_elasticsearch import es_views, es_filters
 
 from mnemonic.news.search_indices import News
-from mnemonic.news.utils.search_utils import get_client
+from mnemonic.news.utils.search_utils import get_connection
 
 
 class NewsView(es_views.ListElasticAPIView):
-    es_client = get_client()
+    es_client = get_connection()
     es_model = News
     es_filter_backends = (
         es_filters.ElasticSQSFilter,
