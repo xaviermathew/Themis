@@ -9,7 +9,7 @@ from django.db.models import Q
 
 from mnemonic.contrib.article_archive_scrapers.base.items import ArticleItemPipeline, ArticleItem
 from mnemonic.news.models import Feed, NewsSource, Article
-from mnemonic.news.utils.cache_utils import DownloadCacheStorage
+# from mnemonic.news.utils.cache_utils import DownloadCacheStorage
 from mnemonic.news.utils.class_utils import get_python_path
 from mnemonic.news.utils.string_utils import slugify
 
@@ -29,7 +29,7 @@ class BaseArchiveSpider(scrapy.Spider):
         d['ITEM_PIPELINES'] = {get_python_path(ArticleItemPipeline): 100}
         d['DOWNLOADER_MIDDLEWARES'] = {'scrapy.downloadermiddlewares.httpcache.HttpCacheMiddleware': 100}
         d['HTTPCACHE_ENABLED'] = True
-        d['HTTPCACHE_STORAGE'] = get_python_path(DownloadCacheStorage)
+        # d['HTTPCACHE_STORAGE'] = get_python_path(DownloadCacheStorage)
         d['HTTPCACHE_DIR'] = settings.ARTICLE_ARCHIVE_CACHE_DIR
         return d
 
