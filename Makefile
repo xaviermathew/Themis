@@ -13,8 +13,7 @@ make_dirs:
 	mkdir -p $(PROJECT_DIR)/data/cache/articles
 	touch $(PROJECT_DIR)/state/logrotate-state
 swap:
-	TOTAL_MEMORY=`expr $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024`
-	sudo /bin/dd if=/dev/zero of=/var/swap bs=1M count=$(TOTAL_MEMORY)
+	sudo /bin/dd if=/dev/zero of=/var/swap bs=1M count=$(expr $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024)
 	sudo /sbin/mkswap /var/swap
 	sudo chmod 600 /var/swap
 	sudo /sbin/swapon /var/swap

@@ -22,7 +22,7 @@ class ArticleItemPipeline(object):
     def process_item(self, item, spider):
         url = item['url']
         html = item.pop('html')
-        body = get_body_from_html(url, html, cache=True)
+        body = get_body_from_html(url, html, cache=False)
         is_top_news = spider.is_top_news(item, body)
         feed = spider.get_feed(item, body)
         try:
