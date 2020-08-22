@@ -52,6 +52,7 @@ venv:
 	sudo apt-get install -y python3-pip
 	sudo apt-get install -y python-dev build-essential git virtualenvwrapper
 	sudo apt-get install -y libpq-dev
+	sudo apt install libcurl4-openssl-dev libssl-dev
 	echo "export WORKON_HOME=~/virtual_env" >> $(HOME)/.bash_aliases
 	echo "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh" >> $(HOME)/.bash_aliases
 	echo "export VISUAL=vim" >> $(HOME)/.bash_aliases

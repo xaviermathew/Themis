@@ -250,6 +250,13 @@ for app in PROJECT_APPS:
         warnings.warn("Importing {}.app_settings.py failed - ({})".format(app, ex))
 
 try:
-    from .local import *
+    from . import local
 except ImportError:
-    warnings.warn('local.py is missing')
+    try:
+        from . import production
+    except ImportError:
+        warnings.warn('local.py/production.py is missing')
+    else:
+        from .production import *
+else:
+    from .local import *
