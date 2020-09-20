@@ -22,7 +22,7 @@ class NewsView(es_views.ListElasticAPIView):
     #     'body'
     # )
     es_sqs_fields = (
-        'author',
+        'source',
         'title',
         'body'
     )

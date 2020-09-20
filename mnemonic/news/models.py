@@ -6,7 +6,6 @@ import logging
 import urllib.parse as urlparse
 
 import feedparser
-from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -83,8 +82,12 @@ class Feed(BaseModel):
 
 
 class Article(BaseModel, NewsIndexable):
-    NEWS_TITLE_FIELD = 'title'
-    NEWS_BODY_FIELD = 'body'
+    INDEX_NEWS_TYPE_FIELD = 'news_type'
+    INDEX_SOURCE_FIELD = 'feed.source.name'
+    INDEX_SOURCE_TYPE_FIELD = 'feed.source.__class__.__name__'
+    INDEX_TITLE_FIELD = 'title'
+    INDEX_BODY_FIELD = 'body'
+    INDEX_PUBLISHED_ON_FIELD = 'published_on'
 
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
     url = models.URLField(unique=True, max_length=2048)
@@ -99,17 +102,16 @@ class Article(BaseModel, NewsIndexable):
     def __str__(self):
         return '%s:%s' % (self.feed, self.title)
 
+    @property
+    def news_type(self):
+        return 'news'
+
     def save(self, *args, **kwargs):
         if self.feed.source == 'Google News India':
             parsed = urlparse.urlparse(self.url)
             if parsed.netloc == 'news.google.com':
                 self.url = urlparse.parse_qs(parsed.query)['url'][0]
         super(Article, self).save(*args, **kwargs)
-
-    def get_index_data(self):
-        d = super(Article, self).get_index_data()
-        d['author'] = self.feed.source.name
-        return d
 
     def process(self):
         from mnemonic.news.utils.article_utils import get_body_from_article
@@ -134,7 +136,11 @@ class Article(BaseModel, NewsIndexable):
 
 
 class Tweet(BaseModel, NewsIndexable):
-    NEWS_TITLE_FIELD = 'tweet'
+    INDEX_NEWS_TYPE_FIELD = 'news_type'
+    INDEX_SOURCE_FIELD = 'entity.name'
+    INDEX_SOURCE_TYPE_FIELD = 'entity.__class__.__name__'
+    INDEX_TITLE_FIELD = 'tweet'
+    INDEX_PUBLISHED_ON_FIELD = 'published_on'
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -148,10 +154,9 @@ class Tweet(BaseModel, NewsIndexable):
     def __str__(self):
         return '%s: %s' % (self.entity, self.tweet)
 
-    def get_index_data(self):
-        d = super(Tweet, self).get_index_data()
-        d['author'] = self.entity.name if self.entity else self.entity.name
-        return d
+    @property
+    def news_type(self):
+        return 'tweet'
 
     def process(self):
         if not self.is_pushed_to_index:

@@ -1,15 +1,24 @@
 from django.conf import settings
+from django.core.validators import EMPTY_VALUES
 
-from elasticsearch_dsl import Document, Keyword, Text
+from elasticsearch_dsl import Document, analyzer, Text, Date
 from elasticsearch_dsl.connections import connections
 
-connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
+from mnemonic.news.utils.string_utils import get
 
+connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
+article_analyzer = analyzer('article_analyzer',
+    tokenizer="standard",
+    filter=["lowercase", "stop", "snowball"],
+)
 
 class News(Document):
-    author = Text(analyzer='snowball', fields={'raw': Keyword()})
-    title = Text(analyzer='snowball', fields={'raw': Keyword()})
-    body = Text(analyzer='snowball')
+    news_type = Text(analyzer='keyword')
+    source = Text(analyzer='standard')
+    source_type = Text(analyzer='keyword')
+    title = Text(analyzer=article_analyzer)
+    body = Text(analyzer=article_analyzer)
+    published_on = Date()
 
     class Index:
         name = 'news'
@@ -19,22 +28,26 @@ class News(Document):
 
 
 class NewsIndexable(object):
-    NEWS_AUTHOR_FIELD = None
-    NEWS_TITLE_FIELD = None
-    NEWS_BODY_FIELD = None
+    INDEX_NEWS_TYPE_FIELD = None
+    INDEX_SOURCE_FIELD = None
+    INDEX_SOURCE_TYPE_FIELD = None
+    INDEX_TITLE_FIELD = None
+    INDEX_BODY_FIELD = None
+    INDEX_PUBLISHED_ON_FIELD = None
 
     def get_index_meta_data(self):
         return {'id': self.get_uid()}
 
     def get_index_data(self):
-        d = {}
-        if self.NEWS_AUTHOR_FIELD:
-            d['author'] = getattr(self, self.NEWS_AUTHOR_FIELD)
-        if self.NEWS_TITLE_FIELD:
-            d['title'] = getattr(self, self.NEWS_TITLE_FIELD)
-        if self.NEWS_BODY_FIELD:
-            d['body'] = getattr(self, self.NEWS_BODY_FIELD)
-        return d
+        d = {
+            'news_type': get(self, self.INDEX_NEWS_TYPE_FIELD),
+            'source': get(self, self.INDEX_SOURCE_FIELD),
+            'source_type': get(self, self.INDEX_SOURCE_TYPE_FIELD),
+            'title': get(self, self.INDEX_TITLE_FIELD),
+            'body': get(self, self.INDEX_BODY_FIELD),
+            'published_on': get(self, self.INDEX_PUBLISHED_ON_FIELD),
+        }
+        return {k: v for k,v in d.items() if v not in EMPTY_VALUES}
 
     def push_to_index(self):
         news = News(meta=self.get_index_meta_data(), **self.get_index_data())
