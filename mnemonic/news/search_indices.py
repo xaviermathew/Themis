@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 
-from elasticsearch_dsl import Document, analyzer, Text, Date
+from elasticsearch_dsl import Document, analyzer, Text, Date, Keyword
 from elasticsearch_dsl.connections import connections
 
 from mnemonic.news.utils.string_utils import get
@@ -13,9 +13,9 @@ article_analyzer = analyzer('article_analyzer',
 )
 
 class News(Document):
-    news_type = Text(analyzer='keyword')
-    source = Text(analyzer='standard')
-    source_type = Text(analyzer='keyword')
+    news_type = Text(analyzer='keyword', fields={'raw': Keyword()})
+    source = Text(analyzer='standard', fields={'raw': Keyword()})
+    source_type = Text(analyzer='keyword', fields={'raw': Keyword()})
     title = Text(analyzer=article_analyzer)
     body = Text(analyzer=article_analyzer)
     published_on = Date()
