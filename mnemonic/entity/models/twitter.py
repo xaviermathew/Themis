@@ -28,7 +28,10 @@ class TwitterMixin(EntityBase):
         tweets = get_tweets_for_username(self.twitter_handle, limit)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
         for tweet in tweets:
-            published_on = datetime.fromtimestamp(tweet.datetime / 1000, pytz.utc)
+            if isinstance(tweet.datetime, int):
+                published_on = datetime.fromtimestamp(tweet.datetime / 1000, pytz.utc)
+            else:
+                published_on = datetime.strptime(tweet.datetime, '%Y-%m-%d %H:%M:%S %Z')
             metadata = {k: v for k, v in vars(tweet).items() if k not in non_metadata_keys}
             try:
                 t = Tweet.objects.create(entity=self,
