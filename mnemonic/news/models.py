@@ -88,6 +88,7 @@ class Article(BaseModel, NewsIndexable):
     INDEX_TITLE_FIELD = 'title'
     INDEX_BODY_FIELD = 'body'
     INDEX_PUBLISHED_ON_FIELD = 'published_on'
+    INDEX_URL_FIELD = 'url'
 
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
     url = models.URLField(unique=True, max_length=2048)
@@ -141,6 +142,7 @@ class Tweet(BaseModel, NewsIndexable):
     INDEX_SOURCE_TYPE_FIELD = 'entity.__class__.__name__'
     INDEX_TITLE_FIELD = 'tweet'
     INDEX_PUBLISHED_ON_FIELD = 'published_on'
+    INDEX_URL_FIELD = 'url'
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -157,6 +159,10 @@ class Tweet(BaseModel, NewsIndexable):
     @property
     def news_type(self):
         return 'tweet'
+
+    @property
+    def url(self):
+        return self.metadata['link']
 
     def process(self):
         if not self.is_pushed_to_index:

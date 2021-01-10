@@ -37,6 +37,7 @@
       <table class="table">
         <thead>
           <tr>
+            <th scope="col">Published on</th>
             <th scope="col">Source</th>
             <th scope="col">Result</th>
           </tr>
@@ -44,8 +45,9 @@
         <tbody>
           {% for result in results %}
           <tr>
+            <td>{{ result.published_on }}</td>
             <td>{{ result.source }}</td>
-            <td>{{ result.title }}</td>
+            <td><a href="{{ result.url }}">{{ result.title }}</a></td>
           </tr>
           {% endfor %}
         </tbody>

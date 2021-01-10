@@ -19,6 +19,7 @@ class News(Document):
     title = Text(analyzer=article_analyzer)
     body = Text(analyzer=article_analyzer)
     published_on = Date()
+    url = Text(analyzer='keyword', fields={'raw': Keyword()})
 
     class Index:
         name = 'news'
@@ -34,6 +35,7 @@ class NewsIndexable(object):
     INDEX_TITLE_FIELD = None
     INDEX_BODY_FIELD = None
     INDEX_PUBLISHED_ON_FIELD = None
+    INDEX_URL_FIELD = None
 
     def get_index_meta_data(self):
         return {'id': self.get_uid()}
@@ -46,6 +48,7 @@ class NewsIndexable(object):
             'title': get(self, self.INDEX_TITLE_FIELD),
             'body': get(self, self.INDEX_BODY_FIELD),
             'published_on': get(self, self.INDEX_PUBLISHED_ON_FIELD),
+            'url': get(self, self.INDEX_URL_FIELD),
         }
         return {k: v for k,v in d.items() if v not in EMPTY_VALUES}
 
