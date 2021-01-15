@@ -144,8 +144,8 @@ class TwitterUser(object):
 
 class Tweet(BaseModel, NewsIndexable):
     INDEX_NEWS_TYPE_FIELD = 'news_type'
-    INDEX_SOURCE_FIELD = 'entity.name'
-    INDEX_SOURCE_TYPE_FIELD = 'entity.__class__.__name__'
+    INDEX_SOURCE_FIELD = 'entity_proxy.name'
+    INDEX_SOURCE_TYPE_FIELD = 'entity_proxy.__class__.__name__'
     INDEX_MENTIONS_FIELD = 'mentions'
     INDEX_TITLE_FIELD = 'tweet'
     INDEX_PUBLISHED_ON_FIELD = 'published_on'
@@ -161,9 +161,9 @@ class Tweet(BaseModel, NewsIndexable):
     is_pushed_to_index = models.BooleanField(default=False)
 
     @cached_property
-    def entity(self):
+    def entity_proxy(self):
         if self.object_id is not None and self.content_type_id is not None:
-            return self.content_type.model.objects.get(pk=self.object_id)
+            return self.content_type.model_class().objects.get(pk=self.object_id)
         else:
             return TwitterUser(self.metadata.get('name'))
 
