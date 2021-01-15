@@ -16,6 +16,7 @@ class News(Document):
     news_type = Text(analyzer='keyword', fields={'raw': Keyword()})
     source = Text(analyzer='standard', fields={'raw': Keyword()})
     source_type = Text(analyzer='keyword', fields={'raw': Keyword()})
+    mentions = Text(analyzer='standard', fields={'raw': Keyword(multi=True)}, multi=True)
     title = Text(analyzer=article_analyzer)
     body = Text(analyzer=article_analyzer)
     published_on = Date()
@@ -32,6 +33,7 @@ class NewsIndexable(object):
     INDEX_NEWS_TYPE_FIELD = None
     INDEX_SOURCE_FIELD = None
     INDEX_SOURCE_TYPE_FIELD = None
+    INDEX_MENTIONS_FIELD = None
     INDEX_TITLE_FIELD = None
     INDEX_BODY_FIELD = None
     INDEX_PUBLISHED_ON_FIELD = None
@@ -45,6 +47,7 @@ class NewsIndexable(object):
             'news_type': get(self, self.INDEX_NEWS_TYPE_FIELD),
             'source': get(self, self.INDEX_SOURCE_FIELD),
             'source_type': get(self, self.INDEX_SOURCE_TYPE_FIELD),
+            'mentions': get(self, self.INDEX_MENTIONS_FIELD),
             'title': get(self, self.INDEX_TITLE_FIELD),
             'body': get(self, self.INDEX_BODY_FIELD),
             'published_on': get(self, self.INDEX_PUBLISHED_ON_FIELD),

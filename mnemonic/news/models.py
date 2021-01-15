@@ -14,6 +14,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.utils import IntegrityError
+from django.utils.functional import cached_property
 
 from mnemonic.entity.models import EntityBase
 from mnemonic.news.search_indices import NewsIndexable
@@ -136,22 +137,39 @@ class Article(BaseModel, NewsIndexable):
                                           routing_key=settings.CELERY_TASK_ROUTING_KEY_PROCESS_ARTICLE)
 
 
+class TwitterUser(object):
+    def __init__(self, name):
+        self.name = name
+
+
 class Tweet(BaseModel, NewsIndexable):
     INDEX_NEWS_TYPE_FIELD = 'news_type'
     INDEX_SOURCE_FIELD = 'entity.name'
     INDEX_SOURCE_TYPE_FIELD = 'entity.__class__.__name__'
+    INDEX_MENTIONS_FIELD = 'mentions'
     INDEX_TITLE_FIELD = 'tweet'
     INDEX_PUBLISHED_ON_FIELD = 'published_on'
     INDEX_URL_FIELD = 'url'
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
     entity = GenericForeignKey('content_type', 'object_id')
     tweet_id = models.BigIntegerField(unique=True)
     tweet = models.TextField()
     published_on = models.DateTimeField()
     metadata = JSONField()
     is_pushed_to_index = models.BooleanField(default=False)
+
+    @cached_property
+    def entity(self):
+        if self.object_id is not None and self.content_type_id is not None:
+            return self.content_type.model.objects.get(pk=self.object_id)
+        else:
+            return TwitterUser(self.metadata.get('name'))
+
+    @cached_property
+    def mentions(self):
+        return [d['name'] for d in self.metadata.get('reply_to', [])]
 
     def __str__(self):
         return '%s: %s' % (self.entity, self.tweet)

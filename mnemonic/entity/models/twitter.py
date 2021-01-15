@@ -17,15 +17,15 @@ class TwitterMixin(EntityBase):
     class Meta:
         abstract = True
 
-    def crawl_tweets(self, limit=None, since_hours=None):
+    def _crawl_tweets(self, limit=None, since_hours=None, mentions=False):
         from mnemonic.news.models import Tweet
         from mnemonic.news.utils.twitter_utils import get_tweets_for_username
 
-        if self.twitter_handle is None:
-            _LOG.warning('%s does not have a twitter handle', self)
-            return
-
-        tweets = get_tweets_for_username(self.twitter_handle, limit=limit, since_hours=since_hours)
+        tweets = get_tweets_for_username(self.twitter_handle,
+                                         limit=limit,
+                                         since_hours=since_hours,
+                                         language='en' if mentions else None,
+                                         mentions=mentions)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
         for tweet in tweets:
             if isinstance(tweet.datetime, int):
@@ -34,7 +34,7 @@ class TwitterMixin(EntityBase):
                 published_on = datetime.strptime(tweet.datetime, '%Y-%m-%d %H:%M:%S %Z')
             metadata = {k: v for k, v in vars(tweet).items() if k not in non_metadata_keys}
             try:
-                t = Tweet.objects.create(entity=self,
+                t = Tweet.objects.create(entity=None if mentions else self,
                                          tweet_id=tweet.id,
                                          tweet=tweet.tweet,
                                          published_on=published_on,
@@ -48,10 +48,19 @@ class TwitterMixin(EntityBase):
                 _LOG.info('Tweet created with id:[%s]', tweet.id)
                 t.process_async()
 
-    def crawl_tweets_async(self, limit=None):
+    def crawl_tweets(self, limit=None, since_hours=None):
+        if self.twitter_handle is None:
+            _LOG.warning('%s does not have a twitter handle', self)
+            return
+
+        for mentions in [False, True]:
+            self._crawl_tweets(limit=limit, since_hours=since_hours, mentions=mentions)
+
+    def crawl_tweets_async(self, limit=None, since_hours=None):
         from mnemonic.entity.tasks import crawl_tweets_async
         crawl_tweets_async.apply_async(kwargs={'entity_ct': ContentType.objects.get_for_model(self).pk,
                                                'entity_id': self.pk,
-                                               'limit': limit},
+                                               'limit': limit,
+                                               'since_hours': since_hours},
                                        queue=settings.CELERY_TASK_QUEUE_CRAWL_TWITTER,
                                        routing_key=settings.CELERY_TASK_ROUTING_KEY_CRAWL_TWITTER)
