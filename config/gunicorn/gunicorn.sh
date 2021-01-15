@@ -8,6 +8,6 @@ $VIRTUALENV_BIN/gunicorn mnemonic.core.wsgi \
   --workers 1 \
   --bind=0.0.0.0:8000 \
   --log-level=info \
-  --timeout=30 \
+  --timeout=120 \
   --log-file=logs/gunicorn.log \
   --env DJANGO_SETTINGS_MODULE=mnemonic.core.settings
