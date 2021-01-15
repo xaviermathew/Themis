@@ -17,7 +17,7 @@ class TwitterMixin(EntityBase):
     class Meta:
         abstract = True
 
-    def crawl_tweets(self, limit=None):
+    def crawl_tweets(self, limit=None, since_hours=None):
         from mnemonic.news.models import Tweet
         from mnemonic.news.utils.twitter_utils import get_tweets_for_username
 
@@ -25,7 +25,7 @@ class TwitterMixin(EntityBase):
             _LOG.warning('%s does not have a twitter handle', self)
             return
 
-        tweets = get_tweets_for_username(self.twitter_handle, limit)
+        tweets = get_tweets_for_username(self.twitter_handle, limit=limit, since_hours=since_hours)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
         for tweet in tweets:
             if isinstance(tweet.datetime, int):

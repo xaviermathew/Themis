@@ -21,7 +21,7 @@ def get_client():
     return Search(using=client, index="news")
 
 
-def serializer_search_results(results):
+def serialize_search_results(results):
     for result in results:
         d = copy.deepcopy(result._d_)
         d['meta'] = copy.deepcopy(result.meta._d_)
@@ -32,5 +32,5 @@ def get_search_results(q):
     client = get_client()
     s = client.filter("simple_query_string", query=q, fields=['title', 'source', 'body'])
     results = itertools.islice(s.scan(), 500)
-    serialized = serializer_search_results(results)
+    serialized = serialize_search_results(results)
     return s.count(), serialized

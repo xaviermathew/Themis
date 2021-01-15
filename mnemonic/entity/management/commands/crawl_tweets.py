@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from mnemonic.entity.models import Person
@@ -6,9 +5,11 @@ from mnemonic.entity.models import Person
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--limit', default=settings.TWITTER_CRAWL_LIMIT, type=int,
+        parser.add_argument('--limit', default=None, type=int,
                             help="How many tweets to crawl")
+        parser.add_argument('--since-hours', default=None, type=int,
+                            help="How many hours of tweets to crawl")
 
     def handle(self, *args, **options):
         for person in Person.objects.all():
-            person.crawl_tweets_async(limit=options['limit'])
+            person.crawl_tweets_async(limit=options['limit'], since=options['since_hours'])
