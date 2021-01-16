@@ -27,6 +27,6 @@ def get_tweets_for_username(username, limit=None, since=None, until=None, mentio
         c.Lang = language
 
     c.Store_object = True
-    c.Resume = 'state/twint/%s' % slugify('_'.join(resume_signature_parts))
+    c.Resume = 'state/twint/%s' % slugify('_'.join(resume_signature_parts), retain_punct={'@'})
     twint.run.Search(c)
     return twint.output.tweets_list

@@ -6,10 +6,12 @@ PUNCT = set(string.punctuation)
 PUNCT.add(' ')
 
 
-def slugify(s, joiner='_'):
+def slugify(s, joiner='_', retain_punct=None):
+    if retain_punct is None:
+        retain_punct = set()
     result = []
     for c in s.lower():
-        if c in PUNCT:
+        if c in PUNCT and c not in retain_punct:
             result.append(joiner)
         else:
             result.append(c)
