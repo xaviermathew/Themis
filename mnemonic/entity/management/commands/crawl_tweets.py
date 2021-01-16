@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.core.management.base import BaseCommand
 
 from mnemonic.entity.models import Person
@@ -11,5 +13,9 @@ class Command(BaseCommand):
                             help="How many hours of tweets to crawl")
 
     def handle(self, *args, **options):
+        if options['since_hours']:
+            since = datetime.today() - timedelta(hours=options['since_hours'])
+        else:
+            since = None
         for person in Person.objects.all():
-            person.crawl_tweets_async(limit=options['limit'], since=options['since_hours'])
+            person.crawl_tweets_async(limit=options['limit'], since=since)

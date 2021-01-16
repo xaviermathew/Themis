@@ -17,13 +17,14 @@ class TwitterMixin(EntityBase):
     class Meta:
         abstract = True
 
-    def _crawl_tweets(self, limit=None, since_hours=None, mentions=False):
+    def _crawl_tweets(self, limit=None, since=None, until=None, mentions=False):
         from mnemonic.news.models import Tweet
         from mnemonic.news.utils.twitter_utils import get_tweets_for_username
 
         tweets = get_tweets_for_username(self.twitter_handle,
                                          limit=limit,
-                                         since_hours=since_hours,
+                                         since=since,
+                                         until=until,
                                          language='en' if mentions else None,
                                          mentions=mentions)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
@@ -48,19 +49,20 @@ class TwitterMixin(EntityBase):
                 _LOG.info('Tweet created with id:[%s]', tweet.id)
                 t.process_async()
 
-    def crawl_tweets(self, limit=None, since_hours=None):
+    def crawl_tweets(self, limit=None, since=None, until=None):
         if self.twitter_handle is None:
             _LOG.warning('%s does not have a twitter handle', self)
             return
 
         for mentions in [False, True]:
-            self._crawl_tweets(limit=limit, since_hours=since_hours, mentions=mentions)
+            self._crawl_tweets(limit=limit, since=since, until=until, mentions=mentions)
 
-    def crawl_tweets_async(self, limit=None, since_hours=None):
+    def crawl_tweets_async(self, limit=None, since=None, until=None):
         from mnemonic.entity.tasks import crawl_tweets_async
         crawl_tweets_async.apply_async(kwargs={'entity_ct': ContentType.objects.get_for_model(self).pk,
                                                'entity_id': self.pk,
                                                'limit': limit,
-                                               'since_hours': since_hours},
+                                               'since': since,
+                                               'until': until},
                                        queue=settings.CELERY_TASK_QUEUE_CRAWL_TWITTER,
                                        routing_key=settings.CELERY_TASK_ROUTING_KEY_CRAWL_TWITTER)

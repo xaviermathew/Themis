@@ -10,6 +10,7 @@ make_dirs:
 	mkdir -p $(PROJECT_DIR)/pids/celery/
 	mkdir -p $(PROJECT_DIR)/static/
 	mkdir -p $(PROJECT_DIR)/state
+	mkdir -p $(PROJECT_DIR)/state/twint
 	mkdir -p $(PROJECT_DIR)/data/cache/articles
 	touch $(PROJECT_DIR)/state/logrotate-state
 swap:
