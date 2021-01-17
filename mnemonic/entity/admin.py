@@ -7,12 +7,17 @@ from mnemonic.core.admin import BaseAdmin
 @admin.register(Person)
 class PersonAdmin(BaseAdmin):
     list_display = ['name']
-    actions = ['crawl_tweets']
+    actions = ['crawl_tweets', 'crawl_mentions']
 
     def crawl_tweets(self, request, qs):
-        messages.add_message(request, messages.INFO, 'Twitter crawl for [%s] handles(s) has been queued' % len(qs))
+        messages.add_message(request, messages.INFO, 'Tweets crawl for [%s] handles(s) has been queued' % len(qs))
         for person in qs:
-            person.crawl_tweets_async()
+            person.crawl_tweets_async(mentions=[False])
+
+    def crawl_mentions(self, request, qs):
+        messages.add_message(request, messages.INFO, 'Mentions crawl for [%s] handles(s) has been queued' % len(qs))
+        for person in qs:
+            person.crawl_tweets_async(mentions=[True])
 
 
 @admin.register(OrganizationType)

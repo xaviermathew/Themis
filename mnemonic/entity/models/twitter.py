@@ -49,20 +49,23 @@ class TwitterMixin(EntityBase):
                 _LOG.info('Tweet created with id:[%s]', tweet.id)
                 t.process_async()
 
-    def crawl_tweets(self, limit=None, since=None, until=None):
+    def crawl_tweets(self, limit=None, since=None, until=None, mentions=None):
         if self.twitter_handle is None:
             _LOG.warning('%s does not have a twitter handle', self)
             return
 
-        for mentions in [False, True]:
+        if mentions is None:
+            mentions = [False, True]
+        for mentions in mentions:
             self._crawl_tweets(limit=limit, since=since, until=until, mentions=mentions)
 
-    def crawl_tweets_async(self, limit=None, since=None, until=None):
+    def crawl_tweets_async(self, limit=None, since=None, until=None, mentions=None):
         from mnemonic.entity.tasks import crawl_tweets_async
         crawl_tweets_async.apply_async(kwargs={'entity_ct': ContentType.objects.get_for_model(self).pk,
                                                'entity_id': self.pk,
                                                'limit': limit,
                                                'since': since,
-                                               'until': until},
+                                               'until': until,
+                                               'mentions': mentions},
                                        queue=settings.CELERY_TASK_QUEUE_CRAWL_TWITTER,
                                        routing_key=settings.CELERY_TASK_ROUTING_KEY_CRAWL_TWITTER)
