@@ -9,8 +9,23 @@ DJANGO_SETTINGS_MODULE=mnemonic.core.settings $VIRTUALENV_BIN/celery multi ${1} 
     1 \
 	-A mnemonic.core \
     --pidfile=pids/celery/%N.pid \
-    --hostname=celery%i@%h \
+    --hostname=celery_%i@%h \
 	-l INFO \
 	--logfile=logs/celery/%N.log \
     --without-gossip --without-mingle --without-heartbeat \
-    -Q:1 T_crawl_feed,T_process_article,T_crawl_twitter,T_process_tweet -c:1 1
+    --pool=solo \
+    -Q:1 T_crawl_feed,T_process_article,T_process_tweet \
+    -c:1 1
+
+DJANGO_SETTINGS_MODULE=mnemonic.core.settings $VIRTUALENV_BIN/celery multi ${1} \
+    1 \
+	-A mnemonic.core \
+    --pidfile=pids/celery/twitter.%N.pid \
+    --hostname=celery_twitter_%i@%h \
+	-l INFO \
+	--logfile=logs/celery/twitter.%N.log \
+    --without-gossip --without-mingle --without-heartbeat \
+    --max-tasks-per-child=1 \
+    --pool=solo \
+    -Q:1 T_crawl_twitter \
+    -c:1 1

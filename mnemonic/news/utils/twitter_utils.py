@@ -1,8 +1,11 @@
+from retry import retry
 import twint
+from twint.token import TokenExpiryException
 
 from mnemonic.news.utils.string_utils import slugify
 
 
+@retry((TokenExpiryException, AttributeError), tries=1000)
 def get_tweets_for_username(username, limit=None, since=None, until=None, mentions=False, language=None):
     c = twint.Config()
     if mentions:

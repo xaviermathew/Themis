@@ -71,11 +71,13 @@ pdbpp==0.10.2
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==7.1.2
+pipdeptree==1.0.0
 poyo==0.5.0
 prompt-toolkit==1.0.18
 Protego==0.1.16
 psycopg2==2.8.5
 ptyprocess==0.6.0
+py==1.10.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycares==3.1.1
@@ -95,6 +97,7 @@ queuelib==1.5.0
 regex==2020.4.4
 requests==2.24.0
 requests-file==1.5.1
+retry==0.9.2
 s3transfer==0.3.3
 schedule==0.6.0
 Scrapy==2.2.0
