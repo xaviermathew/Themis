@@ -187,8 +187,8 @@ CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it c
 CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1 # Disable prefetching, it's causes problems and doesn't help performance
 CELERY_IGNORE_RESULT = True
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'msgpack'
+CELERY_ACCEPT_CONTENT = ['msgpack']
 
 CELERY_TASK_QUEUE_DEFAULT = 'T_default'
 CELERY_TASK_ROUTING_KEY_DEFAULT = 'mnemonic.T_default'

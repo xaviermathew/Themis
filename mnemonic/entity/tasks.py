@@ -7,4 +7,4 @@ from mnemonic.core.celery import app as celery_app
 def crawl_tweets_async(entity_ct, entity_id, limit, since, until, mentions):
     klass = ContentType.objects.get_for_id(entity_ct).model_class()
     entity = klass.objects.get(pk=entity_id)
-    entity.crawl_tweets(limit, since, until, mentions)
+    entity.crawl_tweets(limit=limit, since=since, until=until, mentions=mentions)
