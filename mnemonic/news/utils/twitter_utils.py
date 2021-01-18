@@ -14,7 +14,7 @@ def get_crawl_fname(prefix, signature_parts):
 
 class CrawlBuffer(object):
     def __init__(self, signature_parts):
-        self.fname = get_crawl_fname('state/twint/results_%s.csv', signature_parts)
+        self.fname = get_crawl_fname('state/twint/results_%s.msgpack', signature_parts)
         self.file = open(self.fname, 'ab')
 
     def append(self, tweet):
