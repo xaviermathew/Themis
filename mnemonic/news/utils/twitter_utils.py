@@ -25,7 +25,7 @@ class CrawlBuffer(object):
         return msgpack.Unpacker(open(self.fname), raw=False)
 
 
-@retry((TokenExpiryException, AttributeError), tries=1000)
+@retry(tries=1000)
 def get_tweets_for_username(username, limit=None, since=None, until=None, mentions=False, language=None):
     c = twint.Config()
     if mentions:
