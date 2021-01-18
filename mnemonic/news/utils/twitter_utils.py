@@ -1,3 +1,4 @@
+import msgpack
 from retry import retry
 import twint
 from twint.token import TokenExpiryException
@@ -5,31 +6,51 @@ from twint.token import TokenExpiryException
 from mnemonic.news.utils.string_utils import slugify
 
 
+def get_crawl_fname(prefix, signature_parts):
+    s = slugify('_'.join(signature_parts), retain_punct={'@'})
+    return prefix % s
+
+
+class CrawlBuffer(object):
+    def __init__(self, signature_parts):
+        self.fname = get_crawl_fname('state/twint/results_%s.csv', signature_parts)
+        self.file = open(self.fname, 'a')
+
+    def append(self, tweet):
+        self.file.write(msgpack.packb(tweet, use_bin_type=True))
+
+    def get_data(self):
+        self.file.flush()
+        self.file.close()
+        return msgpack.Unpacker(open(self.fname), raw=False)
+
+
 @retry((TokenExpiryException, AttributeError), tries=1000)
 def get_tweets_for_username(username, limit=None, since=None, until=None, mentions=False, language=None):
     c = twint.Config()
     if mentions:
         c.Search = '@' + username
-        resume_signature_parts = [c.Search]
+        signature_parts = [c.Search]
     else:
         c.Username = username
-        resume_signature_parts = [c.Username]
+        signature_parts = [c.Username]
 
     if limit:
         c.Limit = limit
 
     if since:
         c.Since = since.strftime('%Y-%m-%d %H:%M:%S')
-        resume_signature_parts.append(c.Since)
+        signature_parts.append(c.Since)
 
     if until:
         c.Until = until.strftime('%Y-%m-%d %H:%M:%S')
-        resume_signature_parts.append(c.Until)
+        signature_parts.append(c.Until)
 
     if language:
         c.Lang = language
 
     c.Store_object = True
-    c.Resume = 'state/twint/%s' % slugify('_'.join(resume_signature_parts), retain_punct={'@'})
+    c.Store_object_tweets_list = CrawlBuffer(signature_parts)
+    c.Resume = get_crawl_fname('state/twint/resume_%s.txt', signature_parts)
     twint.run.Search(c)
-    return twint.output.tweets_list
+    return c.Store_object_tweets_list.get_data()
