@@ -23,7 +23,7 @@ class CrawlBuffer(object):
     def get_data(self):
         self.file.flush()
         self.file.close()
-        data = msgpack.Unpacker(open(self.fname, 'b'), raw=False)
+        data = msgpack.Unpacker(open(self.fname, 'rb'), raw=False)
         for d in data:
             t = Tweet()
             t.__dict__.update(d)
