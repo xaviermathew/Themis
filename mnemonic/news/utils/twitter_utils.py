@@ -1,6 +1,7 @@
 import msgpack
 from retry import retry
 import twint
+from twint.tweet import tweet as Tweet
 from twint.token import TokenExpiryException
 
 from mnemonic.news.utils.string_utils import slugify
@@ -17,12 +18,16 @@ class CrawlBuffer(object):
         self.file = open(self.fname, 'a')
 
     def append(self, tweet):
-        self.file.write(msgpack.packb(tweet, use_bin_type=True))
+        self.file.write(msgpack.packb(vars(tweet), use_bin_type=True))
 
     def get_data(self):
         self.file.flush()
         self.file.close()
-        return msgpack.Unpacker(open(self.fname), raw=False)
+        data = msgpack.Unpacker(open(self.fname), raw=False)
+        for d in data:
+            t = Tweet()
+            t.__dict__.update(d)
+            yield t
 
 
 @retry(tries=1000)
