@@ -2,7 +2,7 @@ from retry import retry
 import twint
 from twint.tweet import tweet as Tweet
 
-from mnemonic.news.utils.msgpack_utils import loads, dumps
+from mnemonic.news.utils.msgpack_utils import streaming_loads, dumps
 from mnemonic.news.utils.string_utils import slugify
 
 
@@ -22,7 +22,7 @@ class CrawlBuffer(object):
     def get_data(self):
         self.file.flush()
         self.file.close()
-        data = loads(open(self.fname, 'rb'))
+        data = streaming_loads(open(self.fname, 'rb'))
         for d in data:
             t = Tweet()
             t.__dict__.update(d)

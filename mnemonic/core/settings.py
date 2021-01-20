@@ -187,6 +187,10 @@ CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it c
 CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1 # Disable prefetching, it's causes problems and doesn't help performance
 CELERY_IGNORE_RESULT = True
+
+from ..news.utils.msgpack_utils import loads, dumps
+from kombu.serialization import register
+register('mmsgpack', dumps, loads, content_type='application/x-mmsgpack', content_encoding='utf-8')
 CELERY_TASK_SERIALIZER = 'mmsgpack'
 CELERY_ACCEPT_CONTENT = ['mmsgpack']
 

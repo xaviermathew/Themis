@@ -1,6 +1,5 @@
 import datetime
 
-from kombu.serialization import register
 import msgpack
 
 
@@ -20,8 +19,9 @@ def dumps(obj, **kwargs):
     return msgpack.packb(obj, default=encode_datetime, **kwargs)
 
 
-def loads(stream, **kwargs):
+def loads(packed_string, **kwargs):
+    return msgpack.unpackb(packed_string, raw=False, object_hook=decode_datetime, **kwargs)
+
+
+def streaming_loads(stream, **kwargs):
     return msgpack.Unpacker(stream, raw=False, object_hook=decode_datetime, **kwargs)
-
-
-register('mmsgpack', dumps, loads, content_type='application/x-mmsgpack', content_encoding='utf-8')
