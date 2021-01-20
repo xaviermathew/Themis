@@ -4,8 +4,8 @@ import msgpack
 
 
 def decode_datetime(obj):
-    if b'__datetime__' in obj:
-        obj = datetime.datetime.strptime(obj[b'as_str'].decode(), "%Y%m%dT%H:%M:%S.%f")
+    if '__datetime__' in obj:
+        obj = datetime.datetime.strptime(obj['as_str'], "%Y%m%dT%H:%M:%S.%f")
     return obj
 
 
