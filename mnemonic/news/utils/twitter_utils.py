@@ -1,24 +1,9 @@
-import datetime
-
-import msgpack
 from retry import retry
 import twint
 from twint.tweet import tweet as Tweet
-from twint.token import TokenExpiryException
 
+from mnemonic.news.utils.msgpack_utils import loads, dumps
 from mnemonic.news.utils.string_utils import slugify
-
-
-def decode_datetime(obj):
-    if b'__datetime__' in obj:
-        obj = datetime.datetime.strptime(obj[b'as_str'].decode(), "%Y%m%dT%H:%M:%S.%f")
-    return obj
-
-
-def encode_datetime(obj):
-    if isinstance(obj, datetime.datetime):
-        obj = {'__datetime__': True, 'as_str': obj.strftime("%Y%m%dT%H:%M:%S.%f").encode()}
-    return obj
 
 
 def get_crawl_fname(prefix, signature_parts):
@@ -32,12 +17,12 @@ class CrawlBuffer(object):
         self.file = open(self.fname, 'ab')
 
     def append(self, tweet):
-        self.file.write(msgpack.packb(vars(tweet), use_bin_type=True, default=encode_datetime))
+        self.file.write(dumps(vars(tweet)))
 
     def get_data(self):
         self.file.flush()
         self.file.close()
-        data = msgpack.Unpacker(open(self.fname, 'rb'), raw=False, object_hook=decode_datetime)
+        data = loads(open(self.fname, 'rb'))
         for d in data:
             t = Tweet()
             t.__dict__.update(d)
