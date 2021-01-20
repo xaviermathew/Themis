@@ -17,7 +17,7 @@ class TwitterMixin(EntityBase):
     class Meta:
         abstract = True
 
-    def _crawl_tweets(self, limit=None, since=None, until=None, mentions=False):
+    def _crawl_tweets(self, limit=None, since=None, until=None, mentions=False, only_cached=False):
         from mnemonic.news.models import Tweet
         from mnemonic.news.utils.twitter_utils import get_tweets_for_username
 
@@ -26,7 +26,8 @@ class TwitterMixin(EntityBase):
                                          since=since,
                                          until=until,
                                          language='en' if mentions else None,
-                                         mentions=mentions)
+                                         mentions=mentions,
+                                         only_cached=only_cached)
         non_metadata_keys = {'id', 'id_str', 'tweet', 'datetime', 'datestamp', 'timestamp'}
         for tweet in tweets:
             if isinstance(tweet.datetime, int):
@@ -49,7 +50,7 @@ class TwitterMixin(EntityBase):
                 _LOG.info('Tweet created with id:[%s]', tweet.id)
                 t.process_async()
 
-    def crawl_tweets(self, limit=None, since=None, until=None, mentions=None):
+    def crawl_tweets(self, limit=None, since=None, until=None, mentions=None, only_cached=False):
         if self.twitter_handle is None:
             _LOG.warning('%s does not have a twitter handle', self)
             return
@@ -57,7 +58,7 @@ class TwitterMixin(EntityBase):
         if mentions is None:
             mentions = [False, True]
         for mentions in mentions:
-            self._crawl_tweets(limit=limit, since=since, until=until, mentions=mentions)
+            self._crawl_tweets(limit=limit, since=since, until=until, mentions=mentions, only_cached=only_cached)
 
     def crawl_tweets_async(self, limit=None, since=None, until=None, mentions=None):
         from mnemonic.entity.tasks import crawl_tweets_async
